@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taller a medida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Diseño: una sola columna en pasos numerados, pensada para el móvil; el precio y la tela quedan fijos abajo. */
+:root{
+  --bg:#f2f4f3; --card:#ffffff; --ink:#172023; --muted:#566568; --line:#d5dcdb;
+  --accent:#0d7a5f; --accent-ink:#ffffff; --accent-soft:#e1f2ec; --cut:#d1342b; --sew:#2a5db0;
+  --note-bg:#fff3d6; --note-ink:#5f4300; --fabric:#eef2f0;
+  --font-body:"IBM Plex Sans",system-ui,sans-serif; --font-num:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111819; --card:#192224; --ink:#e7eeee; --muted:#9bacb0; --line:#2b383b;
+    --accent:#3fbf9b; --accent-ink:#06231b; --accent-soft:#1c3a33; --cut:#ff6a5e; --sew:#7aa8f0;
+    --note-bg:#3a2e0f; --note-ink:#f3d58a; --fabric:#202c2e; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111819; --card:#192224; --ink:#e7eeee; --muted:#9bacb0; --line:#2b383b;
+  --accent:#3fbf9b; --accent-ink:#06231b; --accent-soft:#1c3a33; --cut:#ff6a5e; --sew:#7aa8f0;
+  --note-bg:#3a2e0f; --note-ink:#f3d58a; --fabric:#202c2e; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--font-body);padding:16px 16px 110px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:26px;line-height:1.15;margin:0;text-wrap:balance}
+h2{font-size:19px;margin:0 0 12px;display:flex;align-items:center;gap:10px;text-wrap:balance}
+h3.sub{font-size:15px;margin:18px 0 8px}
+.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center;font:600 14px var(--font-body)}
+.lead{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.beta{margin:12px 0 0;background:var(--note-bg);color:var(--note-ink);border-radius:8px;padding:10px 12px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.help{margin:0 0 14px;color:var(--muted);font-size:14.5px}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+button{font:inherit;font-weight:500;border-radius:10px;padding:12px 14px;min-height:46px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;text-align:center}
+button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent);font-weight:600}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button:disabled{opacity:.55;cursor:not-allowed}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.tile{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left}
+.tile b{font-size:16px}
+.tile span{font-size:13px;color:var(--muted);font-weight:400}
+.fields{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:560px){.fields{grid-template-columns:1fr 1fr}}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field.wide{grid-column:1/-1}
+label{font-size:15px;font-weight:500}
+label .u{color:var(--muted);font-weight:400}
+.hint{margin:0;font-size:13.5px;color:var(--muted);min-height:1.2em}
+input[type=text],input[type=number]{font:inherit;font-size:16px;font-family:var(--font-num);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%;min-height:46px}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--accent);flex:none}
+.check{display:flex;align-items:center;gap:10px;font-weight:500;margin-top:14px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+details{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-weight:500;color:var(--ink);min-height:32px}
+details[open] summary{margin-bottom:12px}
+.big{font-size:20px;margin:0 0 4px;text-wrap:balance}
+.big b{font-weight:600;white-space:nowrap}
+.small{margin:0 0 12px;color:var(--muted);font-size:14.5px}
+.preview{border:1px solid var(--line);border-radius:10px;background:var(--fabric);overflow:hidden;color:var(--ink)}
+.preview svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:20px;height:0;border-top:3px solid var(--cut);vertical-align:middle;margin-right:6px}
+.legend i.s{border-top:3px dashed var(--sew)}
+.note{font-size:14px;color:var(--muted);margin:10px 0 0}
+.warn{background:var(--note-bg);color:var(--note-ink);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:14.5px}
+.label-prev svg{width:100%;height:84px;display:block;background:var(--fabric);border:1px solid var(--line);border-radius:10px}
+.price{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
+.price span{font-size:14.5px;color:var(--muted)}
+.price b{font:500 34px/1.1 var(--font-num)}
+.price small{font-size:14px;color:var(--muted)}
+.mat{margin-top:4px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin-bottom:14px}
+td{padding:7px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-family:var(--font-num);white-space:nowrap;padding-left:12px}
+tr.total td{font-weight:600;border-bottom:0}
+.files{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:8px}
+.files li{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.files code{font:500 14.5px var(--font-num)}
+.files span{font-size:14px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.status{min-height:1.4em;margin:10px 0 0;font-size:14.5px}
+textarea{width:100%;min-height:150px;font:12.5px var(--font-num);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:10px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar>div{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:16px}
+.bar .v{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.bar .v span{font-size:12.5px;color:var(--muted)}
+.bar .v b{font:500 15px var(--font-num);white-space:nowrap}
+.bar button{margin-left:auto;min-height:44px;padding:10px 14px;white-space:nowrap}
+select{font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;width:100%;min-height:46px}
+.guide{margin:0 0 16px;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.guide[open] summary{margin-bottom:12px}
+.guide-out{background:var(--accent-soft);border-radius:8px;padding:10px 12px;margin:12px 0;font-size:15px}
+.guide-out p{margin:0 0 6px}
+.guide-out p:last-child{margin:0}
+.guide .note a{color:var(--accent)}
+.v3{position:relative;width:100%;height:min(62vh,440px);background:var(--fabric);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.v3 canvas{display:block;width:100%;height:100%}
+.v3msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;margin:0;color:var(--muted);font-size:15px}
+.v3bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 16px}
+.v3bar button{padding:10px 6px;min-height:44px;font-size:15px}
+.sw{display:flex;flex-wrap:wrap;gap:10px}
+.swb{width:44px;height:44px;border-radius:50%;padding:0;border:2px solid var(--line);min-height:0}
+.swb[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--ink)}
+input[type=color]{width:100%;height:46px;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.cam-steps{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.cam-step{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.cam-step .row{display:flex;flex-wrap:wrap;gap:8px}
+.cam-step .row button{flex:1 1 140px}
+.cam-step small{color:var(--muted);font-size:14px}
+.cam-tips{margin:0 0 4px;padding-left:20px;font-size:14.5px;color:var(--muted)}
+#mov{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column}
+.mov-top{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line)}
+.mov-top>div{flex:1;min-width:0}
+.mov-top p{margin:2px 0 0;font-size:15px;min-height:6em}
+.mov-stage{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#111;overflow:hidden}
+#mov-cv{touch-action:none;display:block;cursor:crosshair}
+#mov-loupe{position:absolute;top:8px;width:120px;height:120px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px #000;pointer-events:none}
+.mov-bot{display:flex;align-items:center;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line)}
+.mov-bot span{margin-right:auto;font-size:14px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){button{transition:background .12s,border-color .12s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Taller a medida</h1>
+    <p class="lead">Elige la prenda, escribe las medidas y obtén el patrón, los archivos para las máquinas y el precio.</p>
+    <p class="beta"><b>Primera versión.</b> Los patrones son un borrador: haz una prenda de prueba antes de vender y comprueba los archivos en la máquina con una pieza de prueba.</p>
+  </header>
+
+  <section class="card" aria-labelledby="h1">
+    <h2 id="h1"><span class="num">1</span>¿Para quién es?</h2>
+    <div class="seg" role="group" aria-label="Para quién es la prenda">
+      <button type="button" data-para="dog" aria-pressed="true">Perro</button>
+      <button type="button" data-para="human" aria-pressed="false">Persona</button>
+    </div>
+    <h3 class="sub">¿Qué prenda?</h3>
+    <div class="tiles" id="tiles" role="group" aria-label="Prenda"></div>
+    <select id="para" hidden aria-hidden="true"><option value="dog">Perro</option><option value="human">Persona</option></select>
+    <select id="garment" hidden aria-hidden="true"></select>
+  </section>
+
+  <section class="card" aria-labelledby="h2">
+    <h2 id="h2"><span class="num">2</span>Medidas</h2>
+    <p class="help">Mide con una cinta flexible, sin apretar. Los números que ves son de ejemplo: cámbialos por los reales.</p>
+    <details class="guide" id="guide">
+      <summary>¿No tienes las medidas? Calcula una estimación</summary>
+      <div id="guide-dog">
+        <div class="fields">
+          <div class="field wide"><label for="g-breed">Raza</label><select id="g-breed"></select></div>
+          <div class="field" id="g-kg-wrap" hidden><label for="g-kg">Peso del perro <span class="u">(kg)</span></label><input id="g-kg" type="number" inputmode="decimal" step="0.5" min="0.5" value="8"></div>
+          <div class="field wide"><label for="g-age">Edad</label>
+            <select id="g-age">
+              <option value="puppy">Cachorro (menos de 6 meses)</option>
+              <option value="young">Joven (de 6 meses hasta adulto)</option>
+              <option value="adult" selected>Adulto</option>
+              <option value="senior">Senior (más de 7 años)</option>
+            </select></div>
+        </div>
+        <div class="guide-out" id="g-out-dog" aria-live="polite"></div>
+        <button type="button" class="primary" id="g-use-dog">Usar estas medidas</button>
+      </div>
+      <div id="guide-human" hidden>
+        <div class="fields">
+          <div class="field"><label for="g-body">Tallas de referencia</label>
+            <select id="g-body"><option value="w">Tallas de mujer</option><option value="m">Tallas de hombre</option></select></div>
+          <div class="field"><label for="g-comp">Complexión</label><select id="g-comp"></select></div>
+        </div>
+        <div class="guide-out" id="g-out-human" aria-live="polite"></div>
+        <button type="button" class="primary" id="g-use-human">Usar estas medidas</button>
+      </div>
+      <p class="note">Es una estimación para empezar, no sustituye a medir. Las tablas de distintas tiendas difieren unos 2 a 4 cm en ropa de persona y hasta unos 10 cm en el pecho del perro. Fuentes: tallas de persona de <a href="https://www.bergfreunde.es/sos-guia-de-tallas/">Bergfreunde (SOS)</a>, tallas de perro del libro Crochero Dog Collection y tiendas de ropa canina, edades de crecimiento de <a href="https://www.royalcanin.com/es/dogs/puppy/when-does-my-puppy-become-an-adult-dog">Royal Canin</a>.</p>
+    </details>
+    <details class="guide" id="cam">
+      <summary>Medir con la cámara (con fotos)</summary>
+      <p class="note" style="margin-top:0">Haces dos fotos con el móvil, una de lado y otra de frente, y tocas unos puntos sobre ellas. Es una estimación: puede fallar varios centímetros, así que compárala con la cinta. Las fotos no se suben a ningún sitio.</p>
+      <ul class="cam-tips">
+        <li>Pega al cuerpo un objeto de tamaño conocido, como una tarjeta bancaria, a la misma distancia de la cámara.</li>
+        <li>Pon el móvil en vertical, a unos 2 metros y a la altura del centro del cuerpo.</li>
+        <li>La persona o el perro, de pie y quieto, con el cuerpo recto.</li>
+      </ul>
+      <div class="fields">
+        <div class="field"><label for="c-ref">Objeto de referencia</label>
+          <select id="c-ref"><option value="8.56">Tarjeta bancaria (lado largo, 8,56 cm)</option><option value="29.7">Hoja A4 (lado largo, 29,7 cm)</option><option value="custom">Otro objeto</option></select></div>
+        <div class="field" id="c-custom-wrap" hidden><label for="c-custom">Largo del objeto <span class="u">(cm)</span></label><input id="c-custom" type="number" inputmode="decimal" step="0.1" min="2" value="20"></div>
+      </div>
+      <div class="cam-steps">
+        <div class="cam-step"><b>Foto 1 · de lado</b><small id="c-st-side">Sin foto</small>
+          <div class="row"><button type="button" data-cam="side" data-src="cam">Hacer foto</button><button type="button" data-cam="side" data-src="gal">Elegir foto</button></div></div>
+        <div class="cam-step"><b>Foto 2 · de frente</b><small id="c-st-front">Sin foto</small>
+          <div class="row"><button type="button" data-cam="front" data-src="cam">Hacer foto</button><button type="button" data-cam="front" data-src="gal">Elegir foto</button></div></div>
+      </div>
+      <input type="file" id="c-in-cam" accept="image/*" capture="environment" hidden>
+      <input type="file" id="c-in-gal" accept="image/*" hidden>
+      <div class="guide-out" id="c-out" aria-live="polite">Haz al menos una foto para ver las medidas.</div>
+      <button type="button" class="primary" id="c-use" hidden>Usar estas medidas</button>
+    </details>
+    <div class="fields">
+      <div class="field wide"><label for="name">Nombre para bordar en la etiqueta</label><input id="name" type="text" value="LUNA" maxlength="12" autocomplete="off"><p class="hint">Hasta 12 letras o números. Las tildes se quitan.</p></div>
+      <div class="field mf" data-for="dogCoat,dogBandana,tee"><label for="neck">Cuello <span class="u">(cm)</span></label><input id="neck" type="number" inputmode="decimal" step="0.5" min="10" value="32"><p class="hint" id="h-neck"></p></div>
+      <div class="field mf" data-for="dogCoat"><label for="chest">Pecho <span class="u">(cm)</span></label><input id="chest" type="number" inputmode="decimal" step="0.5" min="15" value="45"><p class="hint" id="h-chest"></p></div>
+      <div class="field mf" data-for="dogCoat"><label for="back">Largo del lomo <span class="u">(cm)</span></label><input id="back" type="number" inputmode="decimal" step="0.5" min="10" value="32"><p class="hint" id="h-back"></p></div>
+      <div class="field mf" data-for="tee"><label for="bust">Contorno de pecho <span class="u">(cm)</span></label><input id="bust" type="number" inputmode="decimal" step="0.5" min="50" value="92"><p class="hint" id="h-bust"></p></div>
+      <div class="field mf" data-for="tee"><label for="shoulder">Ancho de hombros <span class="u">(cm)</span></label><input id="shoulder" type="number" inputmode="decimal" step="0.5" min="25" value="40"><p class="hint" id="h-shoulder"></p></div>
+      <div class="field mf" data-for="tee"><label for="tlen">Largo de la camiseta <span class="u">(cm)</span></label><input id="tlen" type="number" inputmode="decimal" step="0.5" min="30" value="65"><p class="hint" id="h-tlen"></p></div>
+      <div class="field mf" data-for="tee"><label for="sleeve">Largo de la manga <span class="u">(cm)</span></label><input id="sleeve" type="number" inputmode="decimal" step="0.5" min="5" value="22"><p class="hint" id="h-sleeve"></p></div>
+      <div class="field mf" data-for="skirt"><label for="waist">Cintura <span class="u">(cm)</span></label><input id="waist" type="number" inputmode="decimal" step="0.5" min="40" value="74"><p class="hint" id="h-waist"></p></div>
+      <div class="field mf" data-for="skirt"><label for="hip">Cadera <span class="u">(cm)</span></label><input id="hip" type="number" inputmode="decimal" step="0.5" min="50" value="98"><p class="hint" id="h-hip"></p></div>
+      <div class="field mf" data-for="skirt"><label for="slen">Largo de la falda <span class="u">(cm)</span></label><input id="slen" type="number" inputmode="decimal" step="0.5" min="20" value="55"><p class="hint" id="h-slen"></p></div>
+    </div>
+    <details>
+      <summary>Ajustes del patrón (opcional)</summary>
+      <div class="fields">
+        <div class="field"><label for="ease">Espacio extra <span class="u">(cm)</span></label><input id="ease" type="number" inputmode="decimal" step="0.5" min="0" value="2"><p class="hint">Cuanto más, más holgada queda la prenda.</p></div>
+        <div class="field"><label for="sa">Margen para coser <span class="u">(cm)</span></label><input id="sa" type="number" inputmode="decimal" step="0.1" min="0" value="1"><p class="hint">Tela extra alrededor de cada pieza.</p></div>
+        <div class="field"><label for="fabw">Ancho de la tela <span class="u">(cm)</span></label><input id="fabw" type="number" inputmode="decimal" step="1" min="30" value="140"><p class="hint">El ancho del rollo o del retal que vas a usar.</p></div>
+        <div class="field"><label for="copies">Prendas iguales a cortar a la vez</label><input id="copies" type="number" inputmode="numeric" step="1" min="1" max="20" value="1"><p class="hint">Cortando varias juntas se aprovecha mejor la tela.</p></div>
+        <div class="field"><label for="lh">Alto de las letras bordadas <span class="u">(mm)</span></label><input id="lh" type="number" inputmode="decimal" step="1" min="6" max="40" value="12"><p class="hint">12 mm es un tamaño de etiqueta.</p></div>
+      </div>
+    </details>
+  </section>
+
+  <section class="card" id="sec3d" aria-labelledby="h3d">
+    <h2 id="h3d"><span class="num">3</span>Vista en 3D</h2>
+    <div class="v3" id="v3"><p class="v3msg" id="v3msg">La vista en 3D se carga al llegar aquí.</p></div>
+    <div class="v3bar" role="group" aria-label="Punto de vista">
+      <button type="button" data-view="front" aria-pressed="true">Delante</button>
+      <button type="button" data-view="side" aria-pressed="false">Lado</button>
+      <button type="button" data-view="back" aria-pressed="false">Espalda</button>
+      <button type="button" id="v3spin" aria-pressed="false">Girar solo</button>
+    </div>
+    <div class="fields">
+      <div class="field wide"><label id="swl">Color de la tela</label><div class="sw" id="sw" role="group" aria-labelledby="swl"></div></div>
+      <div class="field"><label for="v3col">Otro color</label><input type="color" id="v3col" value="#2f6f8f"></div>
+      <div class="field"><label for="v3pat">Estampado</label><select id="v3pat"><option value="plain">Liso</option><option value="stripes">Rayas</option><option value="check">Cuadros</option></select></div>
+    </div>
+    <p class="note">Es una simulación aproximada: el maniquí se ajusta a tus medidas y la prenda se coloca con el espacio extra que hayas elegido. No calcula cómo cae el tejido. Arrastra para girar y pellizca para acercar.</p>
+  </section>
+
+  <section class="card" aria-labelledby="h3">
+    <h2 id="h3"><span class="num">4</span>Patrón y tela</h2>
+    <div id="warn"></div>
+    <p class="big" id="resumen"></p>
+    <p class="small" id="resumen2"></p>
+    <div class="preview" id="preview"></div>
+    <div class="legend"><span><i></i>Por aquí se corta</span><span><i class="s"></i>Por aquí se cose</span></div>
+    <p class="note" id="pnote"></p>
+    <h3 class="sub">Etiqueta con el nombre</h3>
+    <div class="label-prev" id="labprev"></div>
+    <p class="note" id="labnote"></p>
+  </section>
+
+  <section class="card" aria-labelledby="h4">
+    <h2 id="h4"><span class="num">5</span>Precio</h2>
+    <div class="price"><span>Precio recomendado, con IVA</span><b id="pvp"></b><small id="pvpsub"></small></div>
+    <div class="seg mat" role="group" aria-label="Tipo de tela">
+      <button type="button" data-mat="new" aria-pressed="true">Tela nueva</button>
+      <button type="button" data-mat="rec" aria-pressed="false">Reciclada o de segunda mano</button>
+    </div>
+    <select id="mat" hidden aria-hidden="true"><option value="new">Tela nueva</option><option value="rec">Reciclada</option></select>
+    <label class="check"><input id="nfc" type="checkbox" checked><span id="nfclabel">Añadir chip NFC lavable</span></label>
+    <details>
+      <summary>Ver el desglose y cambiar los costes</summary>
+      <p class="help">Los costes que ves son de ejemplo. Cámbialos por los del taller y el precio se recalcula solo.</p>
+      <table id="costs" aria-label="Desglose del coste"></table>
+      <div class="fields">
+        <div class="field"><label for="price">Precio de la tela <span class="u">(€ por m²)</span></label><input id="price" type="number" inputmode="decimal" step="0.5" min="0" value="9"></div>
+        <div class="field"><label for="defect">Tela que no se puede usar <span class="u">(%)</span></label><input id="defect" type="number" inputmode="decimal" step="1" min="0" max="80" value="0"><p class="hint">En tela reciclada suele haber manchas o roturas.</p></div>
+        <div class="field"><label for="fast">Hilo, velcro y cierres <span class="u">(€ por prenda)</span></label><input id="fast" type="number" inputmode="decimal" step="0.1" min="0" value="1"></div>
+        <div class="field"><label for="nfcp">Precio de cada chip NFC <span class="u">(€)</span></label><input id="nfcp" type="number" inputmode="decimal" step="0.1" min="0" value="2"></div>
+        <div class="field"><label for="tcut">Minutos de corte <span class="u">(de todo el lote)</span></label><input id="tcut" type="number" inputmode="numeric" step="1" min="0" value="6"></div>
+        <div class="field"><label for="tsew">Minutos de confección <span class="u">(por prenda)</span></label><input id="tsew" type="number" inputmode="numeric" step="1" min="0" value="30"></div>
+        <div class="field"><label for="spm">Velocidad del bordado <span class="u">(puntadas por minuto)</span></label><input id="spm" type="number" inputmode="numeric" step="50" min="100" value="600"></div>
+        <div class="field"><label for="mrate">Coste de las máquinas <span class="u">(€ por hora)</span></label><input id="mrate" type="number" inputmode="decimal" step="0.5" min="0" value="6"></div>
+        <div class="field"><label for="lrate">Coste del trabajo <span class="u">(€ por hora)</span></label><input id="lrate" type="number" inputmode="decimal" step="0.5" min="0" value="12"></div>
+        <div class="field"><label for="margin">Margen de beneficio <span class="u">(%)</span></label><input id="margin" type="number" inputmode="decimal" step="1" min="0" value="40"></div>
+      </div>
+    </details>
+  </section>
+
+  <section class="card" id="step-files" aria-labelledby="h5">
+    <h2 id="h5"><span class="num">6</span>Archivos para las máquinas</h2>
+    <ul class="files">
+      <li><code>patron.dxf</code><span>Para la cortadora de tela y los programas de patronaje.</span></li>
+      <li><code>patron.svg</code><span>Para el plotter de corte o el láser de cuero.</span></li>
+      <li><code>etiqueta.dst</code><span id="dstinfo">Para la bordadora Marsew.</span></li>
+      <li><code>hoja_de_taller.txt</code><span>Para quien confecciona: piezas, medidas y orden de trabajo.</span></li>
+    </ul>
+    <button type="button" class="primary" id="b-zip" disabled>Preparando descarga…</button>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+    <p class="note" id="dlnote"></p>
+    <details>
+      <summary>Otras opciones</summary>
+      <div class="actions">
+        <button type="button" id="b-svg" hidden>Descargar solo el SVG</button>
+        <button type="button" id="b-dxf">Copiar el DXF</button>
+        <button type="button" id="b-txt">Copiar la hoja de taller</button>
+      </div>
+      <details><summary>Ver el texto del DXF</summary><textarea id="dxfview" readonly></textarea></details>
+      <details><summary>Ver la hoja de taller</summary><textarea id="txtview" readonly></textarea></details>
+    </details>
+  </section>
+</div>
+
+<div id="mov" hidden role="dialog" aria-modal="true" aria-labelledby="mov-title">
+  <div class="mov-top"><div><b id="mov-title">Medir sobre la foto</b><p id="mov-prompt"></p></div><button type="button" id="mov-close">Cerrar</button></div>
+  <div class="mov-stage" id="mov-stage"><canvas id="mov-cv"></canvas><canvas id="mov-loupe" width="120" height="120" hidden></canvas></div>
+  <div class="mov-bot"><span id="mov-count"></span><button type="button" id="mov-undo">Deshacer</button><button type="button" class="primary" id="mov-done" disabled>Listo</button></div>
+</div>
+
+<div class="bar">
+  <div>
+    <div class="v"><span>Precio</span><b id="bar-pvp">-</b></div>
+    <div class="v"><span>Tela</span><b id="bar-tela">-</b></div>
+    <button type="button" class="primary" id="b-go">Archivos</button>
+  </div>
+</div>
+
+<script>
+/* ---------- utilidades ---------- */
+const $ = id => document.getElementById(id);
+const num = id => parseFloat($(id).value);
+const eur = v => v.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const f1 = v => v.toLocaleString('es-ES',{maximumFractionDigits:1});
+
+function signedArea(p){let a=0;for(let i=0;i<p.length;i++){const q=p[(i+1)%p.length];a+=p[i][0]*q[1]-q[0]*p[i][1];}return a/2;}
+function offsetPoly(p,d){
+  if(d<=0) return p.map(v=>v.slice());
+  const s = signedArea(p)>0?1:-1, n=p.length, out=[];
+  const norm=(a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;return s>0?[dy/l,-dx/l]:[-dy/l,dx/l];};
+  for(let i=0;i<n;i++){
+    const pr=p[(i+n-1)%n],v=p[i],nx=p[(i+1)%n];
+    const n1=norm(pr,v),n2=norm(v,nx);
+    const k=Math.max(1+n1[0]*n2[0]+n1[1]*n2[1],0.35);
+    out.push([v[0]+(n1[0]+n2[0])*d/k, v[1]+(n1[1]+n2[1])*d/k]);
+  }
+  return out;
+}
+const bbox = p => {let a=1e9,b=1e9,c=-1e9,d=-1e9;p.forEach(v=>{a=Math.min(a,v[0]);b=Math.min(b,v[1]);c=Math.max(c,v[0]);d=Math.max(d,v[1]);});return {x0:a,y0:b,x1:c,y1:d,w:c-a,h:d-b};};
+
+/* ---------- prendas (todo en mm; y hacia abajo) ---------- */
+const bez2=(p0,pc,p2,n)=>{const o=[];for(let i=0;i<=n;i++){const t=i/n,a=(1-t)*(1-t),b=2*(1-t)*t,c=t*t;o.push([a*p0[0]+b*pc[0]+c*p2[0],a*p0[1]+b*pc[1]+c*p2[1]]);}return o;};
+const polyLen=p=>{let s=0;for(let i=1;i<p.length;i++)s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]);return s;};
+const mirrorX=p=>p.map(v=>[-v[0],v[1]]);
+const rect=(w,h)=>[[0,0],[w,0],[w,h],[0,h]];
+const dim=p=>{const b=bbox(p);return f1(b.w/10)+' x '+f1(b.h/10)+' cm';};
+
+/* Abrigo canino. Anchos como arcos aplanados: cuello = (cuello + holgura)/2; pecho = (pecho + holgura)/2 a un 30 % del largo;
+   cola = 75 % del pecho; solapa = (pecho + holgura)/4 + 20 mm de solape, alto 35 % del largo; banda de cuello = ancho de cuello + 40 mm. */
+function dogCoat(m){
+  const Wn=(m.N+m.e)/2, Wc=(m.C+m.e)/2, Wr=0.75*Wc, yc=0.30*m.L, L=m.L, hn=Wn/2, hc=Wc/2, hr=Wr/2;
+  const back=[[-hn,0],[-hn/2,4],[0,6],[hn/2,4],[hn,0],[hc,yc],[hr,L],[hr/2,L+4],[0,L+6],[-hr/2,L+4],[-hr,L],[-hc,yc]];
+  const fl=(m.C+m.e)/4+20, fh=0.35*L, bl=Wn+40;
+  return {pieces:[
+    {name:'ESPALDA',qty:1,pts:back,desc:'Espalda: '+dim(back)},
+    {name:'SOLAPA',qty:2,pts:rect(fl,fh),desc:'Solapa de vientre: '+f1(fl/10)+' x '+f1(fh/10)+' cm'},
+    {name:'CUELLO',qty:1,pts:rect(bl,40),desc:'Banda de cuello: '+f1(bl/10)+' x 4 cm'}],
+    info:'Las solapas y la banda de cuello se cierran con velcro.'};
+}
+/* Bandana: triángulo con base = cuello + holgura + 24 cm de lazada; altura = 45 % de la base. */
+function dogBandana(m){
+  const B=m.N+m.e+240, H=0.45*B, pts=[[-B/2,0],[B/2,0],[0,H]];
+  return {pieces:[{name:'BANDANA',qty:1,pts:pts,desc:'Bandana: base '+f1(B/10)+' cm, altura '+f1(H/10)+' cm'}],
+    info:'Va doblada por el borde del cuello y se ata con la parte ancha.'};
+}
+/* Camiseta. Ancho de pecho de cada pieza = (pecho + holgura)/2; sisa = (pecho + holgura)/8 + 80 mm de caída;
+   cuello = 1/3 del contorno; escote delantero 70 mm y trasero 20 mm; la copa de la manga se ajusta para que
+   su largo sea el de las dos sisas (+1,5 %); banda de cuello = 85 % del contorno del escote, para tejido elástico. */
+function tee(m){
+  const sh=25, Wf=(m.B+m.e)/2, ax=Wf/2, sx=Math.min(m.S/2,ax-5), hn=m.N/6, Ad=(m.B+m.e)/8+80;
+  let Lt=m.Lt, note='';
+  if(Lt<sh+Ad+100){Lt=sh+Ad+100; note='El largo es demasiado corto para estas medidas y se subió a '+f1(Lt/10)+' cm. ';}
+  const arm=bez2([sx,sh],[sx-10,sh+0.75*Ad],[ax,sh+Ad],8);
+  const neck=df=>{const R=bez2([hn,0],[hn,df*0.9],[0,df],8);return {R:R,path:mirrorX(R).concat(R.slice().reverse().slice(1))};};
+  const body=df=>neck(df).path.concat(arm,[[ax+12,Lt],[-ax-12,Lt]],mirrorX(arm).reverse());
+  const front=body(70), backp=body(20);
+  const target=2*polyLen(arm)*1.015, Wm=(m.B+m.e)/5, Wc=0.85*Wm;
+  const cap=Ch=>{const o=[];for(let i=0;i<=24;i++){const t=Math.PI*(1-i/24);o.push([Wm/2*Math.cos(t),Ch-Ch*Math.sin(t)]);}return o;};
+  let lo=20, hi=Math.max(30,Math.min(m.Ls*0.95,450)), Ch=hi;
+  if(polyLen(cap(hi))>=target){for(let i=0;i<40;i++){const mid=(lo+hi)/2;if(polyLen(cap(mid))<target)lo=mid;else hi=mid;}Ch=(lo+hi)/2;}
+  else note+='La copa de la manga no alcanza el largo de la sisa: alarga la manga. ';
+  const sleeve=cap(Ch).concat([[Wc/2,m.Ls],[-Wc/2,m.Ls]]);
+  const Lb=0.85*2*(polyLen(neck(70).R)+polyLen(neck(20).R));
+  return {pieces:[
+    {name:'DELANTERO',qty:1,pts:front,desc:'Delantero: '+dim(front)},
+    {name:'ESPALDA',qty:1,pts:backp,desc:'Espalda: '+dim(backp)},
+    {name:'MANGA',qty:2,pts:sleeve,desc:'Manga: '+dim(sleeve)+', copa de '+f1(Ch/10)+' cm'},
+    {name:'CUELLO',qty:1,pts:rect(Lb,40),desc:'Banda de cuello: '+f1(Lb/10)+' x 4 cm (tejido elástico)'}],
+    info:note+'Copa de manga ajustada a la sisa ('+f1(target/10)+' cm).'};
+}
+/* Falda con goma. Cada panel = (cadera + holgura)/2 arriba y 12 % más ancho en el bajo; banda de cintura = cadera + holgura;
+   la goma mide el 95 % de la cintura. */
+function skirt(m){
+  const Wt=(m.Hi+m.e)/2, Wh=Wt*1.12, Lk=m.Lk;
+  const panel=[[-Wt/2,0],[Wt/2,0],[Wh/2,Lk],[Wh/4,Lk+3],[0,Lk+4],[-Wh/4,Lk+3],[-Wh/2,Lk]];
+  const bl=m.Hi+m.e;
+  return {pieces:[
+    {name:'DELANTERO',qty:1,pts:panel,desc:'Delantero: '+dim(panel)},
+    {name:'ESPALDA',qty:1,pts:panel,desc:'Espalda: '+dim(panel)},
+    {name:'CINTURA',qty:1,pts:rect(bl,70),desc:'Banda de cintura: '+f1(bl/10)+' x 7 cm'}],
+    info:'Goma de cintura de '+f1(0.95*m.Wa/10)+' cm (el 95 % de la cintura).'};
+}
+
+const GARMENTS={
+  dogCoat:{para:'dog',label:'Abrigo',desc:'Con solapas de velcro bajo el vientre',build:dogCoat,need:['N','C','L'],def:{neck:32,chest:45,back:32,ease:2,tsew:30},
+    measures:m=>'cuello '+f1(m.N/10)+' | pecho '+f1(m.C/10)+' | largo de lomo '+f1(m.L/10),
+    steps:(m,d)=>[
+      'Cortar con patron.dxf (capa CORTE) o patron.svg. Piezas sin girar, respetando el hilo.',
+      'Bordar la etiqueta con etiqueta.dst.',
+      'Coser las solapas a los laterales de la espalda, a la altura del pecho (30 % del largo desde el cuello).',
+      'Cerrar el borde de cuello y del bajo con el margen de costura.',
+      'Coser la banda de cuello al borde del cuello y poner velcro en el solape de 40 mm.',
+      'Poner velcro en las solapas (solape de 40 mm bajo el vientre).']},
+  dogBandana:{para:'dog',label:'Bandana',desc:'Pañuelo triangular para atar',build:dogBandana,need:['N'],def:{neck:32,ease:2,tsew:10},
+    measures:m=>'cuello '+f1(m.N/10),
+    steps:(m,d)=>[
+      'Cortar con patron.dxf (capa CORTE) o patron.svg.',
+      'Bordar la etiqueta con etiqueta.dst y coserla en el centro, cerca del borde del cuello.',
+      'Doblar el margen de costura en los tres lados y coser el dobladillo.']},
+  tee:{para:'human',label:'Camiseta',desc:'Básica, de tela de punto',build:tee,need:['N','B','S','Lt','Ls'],def:{neck:37,bust:92,shoulder:40,tlen:65,sleeve:22,ease:8,tsew:45},
+    measures:m=>'pecho '+f1(m.B/10)+' | hombros '+f1(m.S/10)+' | cuello '+f1(m.N/10)+' | largo '+f1(m.Lt/10)+' | manga '+f1(m.Ls/10),
+    steps:(m,d)=>[
+      'Cortar con patron.dxf (capa CORTE) o patron.svg. Piezas sin girar, respetando el hilo. Tejido de punto con elasticidad.',
+      'Bordar la etiqueta con etiqueta.dst antes de coser nada.',
+      'Unir los hombros de delantero y espalda (remalladora).',
+      'Coser la banda de cuello cerrada en anillo y montarla en el escote, estirando un poco.',
+      'Montar las mangas en las sisas con las copas centradas en el hombro.',
+      'Cerrar costados y mangas en una pasada, de puño a bajo.',
+      'Dobladillo del bajo y de los puños.']},
+  skirt:{para:'human',label:'Falda',desc:'Recta, con goma en la cintura',build:skirt,need:['Wa','Hi','Lk'],def:{waist:74,hip:98,slen:55,ease:6,tsew:40},
+    measures:m=>'cintura '+f1(m.Wa/10)+' | cadera '+f1(m.Hi/10)+' | largo '+f1(m.Lk/10),
+    steps:(m,d)=>[
+      'Cortar con patron.dxf (capa CORTE) o patron.svg. Piezas sin girar, respetando el hilo.',
+      'Bordar la etiqueta con etiqueta.dst y coserla en el interior de la cintura.',
+      'Unir delantero y espalda por los costados.',
+      'Cerrar la banda de cintura en anillo, montarla en el borde superior dejando un hueco y pasar la goma de '+f1(0.95*m.Wa/10)+' cm.',
+      'Dobladillo del bajo.']}
+};
+
+function readInputs(){
+  return {
+    g:$('garment').value,
+    N:num('neck')*10, C:num('chest')*10, L:num('back')*10,
+    B:num('bust')*10, S:num('shoulder')*10, Lt:num('tlen')*10, Ls:num('sleeve')*10,
+    Wa:num('waist')*10, Hi:num('hip')*10, Lk:num('slen')*10,
+    e:num('ease')*10, sa:num('sa')*10, FW:num('fabw')*10, n:Math.max(1,Math.min(20,Math.round(num('copies'))||1)),
+    name:$('name').value, lh:num('lh')
+  };
+}
+function validInputs(m){
+  const G=GARMENTS[m.g];
+  return !!G && G.need.every(k=>isFinite(m[k])&&m[k]>0) && isFinite(m.FW)&&m.FW>0 && isFinite(m.e)&&m.e>=0 && isFinite(m.sa)&&m.sa>=0 && isFinite(m.lh)&&m.lh>0;
+}
+function buildPieces(m){return GARMENTS[m.g].build(m);}
+
+/* ---------- anidado por filas (sin girar piezas) ---------- */
+function nest(m,pieces){
+  const gap=10, margin=10, items=[];
+  for(let c=1;c<=m.n;c++) pieces.forEach(pc=>{for(let q=1;q<=pc.qty;q++){
+    const cut=offsetPoly(pc.pts,m.sa), b=bbox(cut);
+    items.push({base:pc.name,label:pc.name+(m.n>1?' '+c:'')+(pc.qty>1?'.'+q:''),sew:pc.pts,cut:cut,b:b});
+  }});
+  items.sort((a,b)=>b.b.h-a.b.h);
+  let x=margin,y=margin,rowH=0,over=false,maxX=0;
+  items.forEach(it=>{
+    if(it.b.w>m.FW-2*margin) over=true;
+    if(x>margin && x+it.b.w>m.FW-margin){y+=rowH+gap;x=margin;rowH=0;}
+    it.dx=x-it.b.x0; it.dy=y-it.b.y0; it.px=x; it.py=y;
+    x+=it.b.w+gap; rowH=Math.max(rowH,it.b.h); maxX=Math.max(maxX,x-gap);
+  });
+  const len=y+rowH+margin, usedW=Math.min(m.FW,maxX+margin);
+  const area=items.reduce((s,it)=>s+Math.abs(signedArea(it.cut)),0);
+  return {items,len,usedW,over,area};
+}
+const mv=(p,dx,dy)=>p.map(v=>[v[0]+dx,v[1]+dy]);
+
+/* ---------- SVG (unidades mm) ---------- */
+const pathD = p => 'M'+p.map(v=>v[0].toFixed(2)+' '+v[1].toFixed(2)).join('L')+'Z';
+/* o.css = true: colores del tema y trazos escalados para la vista en pantalla; si no, valores fijos en mm para exportar */
+function svgPieces(nst,o){
+  let g='';
+  nst.items.forEach(it=>{
+    const cut=mv(it.cut,it.dx,it.dy), sew=mv(it.sew,it.dx,it.dy), b=bbox(cut);
+    const cs=o.css?'style="stroke:var(--cut)"':'stroke="#d1342b"', ss=o.css?'style="stroke:var(--sew)"':'stroke="#2a5db0"', ts=o.css?'style="fill:var(--muted)"':'fill="#555"';
+    g+='<g id="'+it.label.replace(/[^A-Za-z0-9._-]/g,'_')+'"><path class="cut" d="'+pathD(cut)+'" fill="none" '+cs+' stroke-width="'+o.cw+'"/>'
+      +'<path class="sew" d="'+pathD(sew)+'" fill="none" '+ss+' stroke-width="'+o.sw+'" stroke-dasharray="'+o.da+'"/>'
+      +'<text x="'+(b.x0+b.w/2).toFixed(1)+'" y="'+(b.y0+b.h/2).toFixed(1)+'" font-size="'+o.fs+'" text-anchor="middle" '+ts+' font-family="sans-serif">'+it.label+'</text></g>';
+  });
+  return g;
+}
+function buildSVG(nst,W){
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'mm" height="'+nst.len.toFixed(1)+'mm" viewBox="0 0 '+W+' '+nst.len.toFixed(1)+'">\n'
+    +svgPieces(nst,{css:false,cw:0.5,sw:0.4,da:'4 3',fs:12})+'\n</svg>\n';
+}
+function previewSVG(nst,W){
+  const Hh=nst.len, k=W/700;
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+Hh.toFixed(1)+'" role="img" aria-label="Piezas colocadas sobre la tela">'
+    +'<rect x="0" y="0" width="'+W+'" height="'+Hh.toFixed(1)+'" fill="none" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="'+(6*k)+' '+(4*k)+'" stroke-width="'+k+'"/>'
+    +svgPieces(nst,{css:true,cw:(1.6*k).toFixed(2),sw:(1.2*k).toFixed(2),da:(5*k).toFixed(1)+' '+(3.5*k).toFixed(1),fs:(15*k).toFixed(1)})+'</svg>';
+}
+
+/* ---------- DXF R12 (mm; capas CORTE, COSTURA, GUIA, TEXTO) ---------- */
+function buildDXF(nst){
+  const H=nst.len, L=[], add=(c,v)=>{L.push(String(c));L.push(String(v));};
+  const fx=v=>v.toFixed(3);
+  const layers=[['CORTE',1],['COSTURA',5],['GUIA',3],['TEXTO',7]];
+  add(0,'SECTION');add(2,'HEADER');add(9,'$ACADVER');add(1,'AC1009');add(0,'ENDSEC');
+  add(0,'SECTION');add(2,'TABLES');
+  add(0,'TABLE');add(2,'LTYPE');add(70,1);add(0,'LTYPE');add(2,'CONTINUOUS');add(70,0);add(3,'Solid line');add(72,65);add(73,0);add(40,'0.0');add(0,'ENDTAB');
+  add(0,'TABLE');add(2,'LAYER');add(70,layers.length);
+  layers.forEach(l=>{add(0,'LAYER');add(2,l[0]);add(70,0);add(62,l[1]);add(6,'CONTINUOUS');});
+  add(0,'ENDTAB');add(0,'ENDSEC');
+  add(0,'SECTION');add(2,'ENTITIES');
+  const poly=(layer,pts)=>{
+    add(0,'POLYLINE');add(8,layer);add(66,1);add(10,'0.0');add(20,'0.0');add(30,'0.0');add(70,1);
+    pts.forEach(v=>{add(0,'VERTEX');add(8,layer);add(10,fx(v[0]));add(20,fx(H-v[1]));add(30,'0.0');});
+    add(0,'SEQEND');add(8,layer);
+  };
+  nst.items.forEach(it=>{
+    const cut=mv(it.cut,it.dx,it.dy), sew=mv(it.sew,it.dx,it.dy), b=bbox(cut);
+    poly('CORTE',cut); poly('COSTURA',sew);
+    const cx=b.x0+b.w/2, cy=b.y0+b.h/2;
+    add(0,'LINE');add(8,'GUIA');add(10,fx(cx));add(20,fx(H-(cy-b.h*0.2)));add(30,'0.0');add(11,fx(cx));add(21,fx(H-(cy+b.h*0.2)));add(31,'0.0');
+    add(0,'TEXT');add(8,'TEXTO');add(10,fx(cx-30));add(20,fx(H-cy-4));add(30,'0.0');add(40,'8.0');add(1,it.label);
+  });
+  add(0,'ENDSEC');add(0,'EOF');
+  return L.join('\r\n')+'\r\n';
+}
+
+/* ---------- Bordado: letra de un solo trazo -> DST (unidades de 0,1 mm) ---------- */
+const O=[[1,0],[0,1],[0,5],[1,6],[3,6],[4,5],[4,1],[3,0],[1,0]];
+const P=[[0,0],[0,6],[3,6],[4,5],[4,4],[3,3],[0,3]];
+const GLY={
+ A:[[[0,0],[0,4],[2,6],[4,4],[4,0]],[[0,2],[4,2]]],
+ B:[[[0,0],[0,6],[3,6],[4,5],[4,4],[3,3],[0,3]],[[3,3],[4,2],[4,1],[3,0],[0,0]]],
+ C:[[[4,5],[3,6],[1,6],[0,5],[0,1],[1,0],[3,0],[4,1]]],
+ D:[[[0,0],[0,6],[3,6],[4,5],[4,1],[3,0],[0,0]]],
+ E:[[[4,6],[0,6],[0,0],[4,0]],[[0,3],[3,3]]],
+ F:[[[4,6],[0,6],[0,0]],[[0,3],[3,3]]],
+ G:[[[4,5],[3,6],[1,6],[0,5],[0,1],[1,0],[3,0],[4,1],[4,3],[2,3]]],
+ H:[[[0,0],[0,6]],[[4,0],[4,6]],[[0,3],[4,3]]],
+ I:[[[1,6],[3,6]],[[2,6],[2,0]],[[1,0],[3,0]]],
+ J:[[[4,6],[4,1],[3,0],[1,0],[0,1]]],
+ K:[[[0,0],[0,6]],[[4,6],[0,3],[4,0]]],
+ L:[[[0,6],[0,0],[4,0]]],
+ M:[[[0,0],[0,6],[2,3],[4,6],[4,0]]],
+ N:[[[0,0],[0,6],[4,0],[4,6]]],
+ O:[O],
+ P:[P],
+ Q:[O,[[2,2],[4,0]]],
+ R:[P,[[2,3],[4,0]]],
+ S:[[[4,5],[3,6],[1,6],[0,5],[0,4],[1,3],[3,3],[4,2],[4,1],[3,0],[1,0],[0,1]]],
+ T:[[[0,6],[4,6]],[[2,6],[2,0]]],
+ U:[[[0,6],[0,1],[1,0],[3,0],[4,1],[4,6]]],
+ V:[[[0,6],[2,0],[4,6]]],
+ W:[[[0,6],[1,0],[2,3],[3,0],[4,6]]],
+ X:[[[0,6],[4,0]],[[4,6],[0,0]]],
+ Y:[[[0,6],[2,3],[4,6]],[[2,3],[2,0]]],
+ Z:[[[0,6],[4,6],[0,0],[4,0]]],
+ '0':[O],
+ '1':[[[1,5],[2,6],[2,0]],[[1,0],[3,0]]],
+ '2':[[[0,5],[1,6],[3,6],[4,5],[4,4],[0,0],[4,0]]],
+ '3':[[[0,5],[1,6],[3,6],[4,5],[4,4],[3,3],[1,3]],[[3,3],[4,2],[4,1],[3,0],[1,0],[0,1]]],
+ '4':[[[3,0],[3,6],[0,2],[4,2]]],
+ '5':[[[4,6],[0,6],[0,3],[3,3],[4,2],[4,1],[3,0],[0,0]]],
+ '6':[[[4,5],[3,6],[1,6],[0,5],[0,1],[1,0],[3,0],[4,1],[4,2],[3,3],[0,3]]],
+ '7':[[[0,6],[4,6],[1,0]]],
+ '8':[[[1,3],[0,4],[0,5],[1,6],[3,6],[4,5],[4,4],[3,3],[1,3],[0,2],[0,1],[1,0],[3,0],[4,1],[4,2],[3,3]]],
+ '9':[[[0,1],[1,0],[3,0],[4,1],[4,5],[3,6],[1,6],[0,5],[0,4],[1,3],[4,3]]],
+ '-':[[[0,3],[4,3]]],
+ '.':[[[1.5,0],[2.5,0]]]
+};
+function cleanText(t){return t.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z0-9 .-]/g,'').slice(0,12);}
+function labelPaths(text,hMm){
+  const u=hMm*10/6, adv=5.5, sp=3;
+  let x=0, paths=[];
+  for(const ch of cleanText(text)){
+    if(ch===' '){x+=sp;continue;}
+    (GLY[ch]||[]).forEach(pl=>paths.push(pl.map(v=>[(x+v[0])*u,v[1]*u])));
+    x+=adv;
+  }
+  const w=Math.max(x-1.5,0)*u, h=6*u;
+  paths=paths.map(pl=>pl.map(v=>[v[0]-w/2,v[1]-h/2]));
+  return {paths,w:w/10,h:h/10};
+}
+function encRec(x,y,type){ /* x,y: desplazamiento en 0,1 mm, y positivo = arriba */
+  let b0=0,b1=0,b2=0;const bit=b=>1<<b;
+  if(type==='end') return [0,0,0xF3];
+  if(type==='jump') b2+=bit(7);
+  b2+=bit(0)+bit(1);
+  if(x>40){b2+=bit(2);x-=81;} if(x<-40){b2+=bit(3);x+=81;}
+  if(x>13){b1+=bit(2);x-=27;} if(x<-13){b1+=bit(3);x+=27;}
+  if(x>4){b0+=bit(2);x-=9;} if(x<-4){b0+=bit(3);x+=9;}
+  if(x>1){b1+=bit(0);x-=3;} if(x<-1){b1+=bit(1);x+=3;}
+  if(x>0){b0+=bit(0);x-=1;} if(x<0){b0+=bit(1);x+=1;}
+  if(y>40){b2+=bit(5);y-=81;} if(y<-40){b2+=bit(4);y+=81;}
+  if(y>13){b1+=bit(5);y-=27;} if(y<-13){b1+=bit(4);y+=27;}
+  if(y>4){b0+=bit(5);y-=9;} if(y<-4){b0+=bit(4);y+=9;}
+  if(y>1){b1+=bit(7);y-=3;} if(y<-1){b1+=bit(6);y+=3;}
+  if(y>0){b0+=bit(7);y-=1;} if(y<0){b0+=bit(6);y+=1;}
+  return [b0,b1,b2];
+}
+function buildDST(text,hMm){
+  const lab=labelPaths(text,hMm), recs=[], ABS=[]; let cx=0,cy=0,mnx=0,mxx=0,mny=0,mxy=0,st=0;
+  const track=()=>{mnx=Math.min(mnx,cx);mxx=Math.max(mxx,cx);mny=Math.min(mny,cy);mxy=Math.max(mxy,cy);};
+  function go(tx,ty,type){
+    tx=Math.round(tx);ty=Math.round(ty);
+    const x0=cx,y0=cy,dx=tx-x0,dy=ty-y0,steps=Math.max(1,Math.ceil(Math.max(Math.abs(dx),Math.abs(dy))/121));
+    for(let k=1;k<=steps;k++){
+      const nx=Math.round(x0+dx*k/steps)-cx, ny=Math.round(y0+dy*k/steps)-cy;
+      recs.push(encRec(nx,ny,type)); cx+=nx; cy+=ny; ABS.push([cx,cy,type]); if(type==='stitch') st++; track();
+    }
+  }
+  function run(pl){
+    for(let i=1;i<pl.length;i++){
+      const a=pl[i-1],b=pl[i],len=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.ceil(len/25));
+      for(let k=1;k<=n;k++) go(a[0]+(b[0]-a[0])*k/n, a[1]+(b[1]-a[1])*k/n,'stitch');
+    }
+  }
+  lab.paths.forEach(pl=>{
+    go(pl[0][0],pl[0][1],'jump');
+    run(pl); run(pl.slice().reverse()); run(pl);
+  });
+  recs.push(encRec(0,0,'end'));
+  const pad=(s,n)=>(s+' '.repeat(n)).slice(0,n), p5=v=>String(Math.abs(v)).padStart(5,' ');
+  const total=recs.length-1;
+  let hdr='LA:'+pad('ETIQUETA',16)+'\r'+'ST:'+String(total).padStart(7,' ')+'\r'+'CO:'+String(0).padStart(3,' ')+'\r'
+    +'+X:'+p5(mxx)+'\r'+'-X:'+p5(mnx)+'\r'+'+Y:'+p5(mxy)+'\r'+'-Y:'+p5(mny)+'\r'
+    +'AX:'+(cx>=0?'+':'-')+p5(cx)+'\r'+'AY:'+(cy>=0?'+':'-')+p5(cy)+'\r'+'MX:+'+p5(0)+'\r'+'MY:+'+p5(0)+'\r'+'PD:******\r';
+  const bytes=new Uint8Array(512+recs.length*3);
+  for(let i=0;i<512;i++) bytes[i]=32;
+  for(let i=0;i<hdr.length;i++) bytes[i]=hdr.charCodeAt(i)&255;
+  bytes[hdr.length]=0x1A;
+  recs.forEach((r,i)=>{bytes[512+i*3]=r[0];bytes[513+i*3]=r[1];bytes[514+i*3]=r[2];});
+  return {bytes,stitches:st,w:lab.w,h:lab.h,paths:lab.paths,abs:ABS};
+}
+
+/* ---------- ZIP sin compresión ---------- */
+const CRC=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function buildZip(files){
+  const enc=new TextEncoder(), d=new Date();
+  const time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1), date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  const parts=[], cd=[]; let off=0;
+  const u16=v=>[v&255,(v>>8)&255], u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  files.forEach(f=>{
+    const nm=enc.encode(f.name), data=f.data, crc=crc32(data);
+    const lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(time),...u16(date),...u32(crc),...u32(data.length),...u32(data.length),...u16(nm.length),...u16(0)]);
+    parts.push(lh,nm,data);
+    cd.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(time),...u16(date),...u32(crc),...u32(data.length),...u32(data.length),...u16(nm.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nm);
+    off+=lh.length+nm.length+data.length;
+  });
+  const cdSize=cd.reduce((s,a)=>s+a.length,0);
+  const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cdSize),...u32(off),...u16(0)]);
+  return new Blob([...parts,...cd,end],{type:'application/zip'});
+}
+
+/* ---------- coste ---------- */
+function computeCost(m,nst,dst){
+  const d=Math.min(Math.max(num('defect')/100,0),0.8);
+  const areaM2=(nst.usedW*nst.len)/1e6/m.n;
+  const tela=areaM2/(1-d)*num('price');
+  const fast=num('fast');
+  const nfc=$('nfc').checked?num('nfcp'):0;
+  const embMin=5+dst.stitches/num('spm');
+  const machMin=num('tcut')/m.n+embMin;
+  const mach=machMin/60*num('mrate');
+  const labor=num('tsew')/60*num('lrate');
+  const cost=tela+fast+nfc+mach+labor;
+  const pvp=cost*(1+num('margin')/100), iva=pvp*0.21;
+  return {areaM2,tela,fast,nfc,mach,machMin,labor,cost,pvp,iva,tot:pvp+iva,d};
+}
+
+/* ---------- hoja de taller ---------- */
+function buildSheet(m,pieces,info,nst,dst,c){
+  const G=GARMENTS[m.g], L=[];
+  L.push('HOJA DE TALLER - '+(G.para==='dog'?'PERRO':'PERSONA')+': '+G.label.toUpperCase()+' (plantilla v0, sin probar en un cuerpo real)');
+  L.push('Cliente / etiqueta: '+(cleanText(m.name)||'-'));
+  L.push('Medidas (cm): '+G.measures(m)+' | holgura '+f1(m.e/10)+' | margen de costura '+f1(m.sa/10));
+  L.push('');
+  L.push('PIEZAS POR PRENDA');
+  pieces.forEach(p=>L.push('- '+p.name+' x'+p.qty+': '+p.desc));
+  if(info) L.push('Nota: '+info);
+  L.push('');
+  L.push('TELA: ancho '+f1(m.FW/10)+' cm | largo necesario '+f1(nst.len/10)+' cm | prendas cortadas a la vez: '+m.n);
+  L.push('Tela bien aprovechada: '+f1(100*nst.area/(nst.usedW*nst.len))+' %');
+  L.push('');
+  L.push('ORDEN DE OPERACIONES');
+  const st=G.steps(m,dst).slice();
+  st.forEach((t,i)=>L.push((i+1)+'. '+t+(t.indexOf('etiqueta.dst')>=0?' '+dst.stitches+' puntadas, '+f1(dst.w)+' x '+f1(dst.h)+' mm; comprobar el hilo de cada aguja en la máquina.':'')));
+  L.push((st.length+1)+'. Coser el chip NFC lavable en el forro o en una costura, lejos de metales, y registrarlo a nombre del cliente.');
+  L.push((st.length+2)+'. Probar la prenda y anotar los cambios de medida antes de abrir más pedidos.');
+  L.push('');
+  L.push('COSTE (cifras de ejemplo): '+eur(c.cost)+' | PVP sin IVA '+eur(c.pvp)+' | con IVA '+eur(c.tot));
+  return L.join('\r\n')+'\r\n';
+}
+
+/* ---------- textos de ayuda por medida ---------- */
+const HINTS={
+ neck:{dog:'Alrededor del cuello, donde se apoya el collar.',human:'Alrededor de la base del cuello.'},
+ chest:{dog:'Alrededor de la parte más ancha de las costillas, justo detrás de las patas delanteras.'},
+ back:{dog:'Del cuello, donde se apoya el collar, a la base de la cola, siguiendo la columna.'},
+ bust:{human:'Alrededor de la parte más ancha del pecho, con la cinta recta.'},
+ shoulder:{human:'De la punta de un hombro a la del otro, por la espalda.'},
+ tlen:{human:'Desde lo alto del hombro, junto al cuello, hasta donde quieres que acabe.'},
+ sleeve:{human:'Desde la punta del hombro hasta donde quieres que acabe la manga.'},
+ waist:{human:'Alrededor de la parte más estrecha de la cintura.'},
+ hip:{human:'Alrededor de la parte más ancha de las caderas.'},
+ slen:{human:'Desde la cintura hasta donde quieres que acabe la falda.'}
+};
+function updateHints(){const para=$('para').value;Object.keys(HINTS).forEach(k=>{const el=$('h-'+k);if(el) el.textContent=HINTS[k][para]||'';});}
+
+/* ---------- render ---------- */
+let CUR=null;
+function render(){
+  const m=readInputs(), warn=$('warn');
+  if(!validInputs(m)){warn.innerHTML='<div class="warn">Revisa las medidas: todas deben ser números mayores que cero.</div>';return;}
+  const msgs=[];
+  if(m.g==='dogCoat'&&m.C<m.N) msgs.push('El pecho es menor que el cuello. Revisa las medidas.');
+  if(m.g==='skirt'&&m.Hi<m.Wa) msgs.push('La cadera es menor que la cintura. Revisa las medidas.');
+  if(m.g==='tee'&&m.S/2>(m.B+m.e)/4) msgs.push('Los hombros son más anchos que la mitad del pecho. Revisa las medidas.');
+  const built=buildPieces(m), pieces=built.pieces, info=built.info, nst=nest(m,pieces), dst=buildDST(m.name,m.lh);
+  if(nst.over) msgs.push('Hay piezas más anchas que la tela. Usa una tela más ancha.');
+  if(dst.w>100) msgs.push('La etiqueta mide '+f1(dst.w)+' mm de ancho. Comprueba que cabe en el aro de la bordadora.');
+  warn.innerHTML=msgs.map(t=>'<div class="warn">'+t+'</div>').join('');
+  const c=computeCost(m,nst,dst);
+  const util=100*nst.area/(nst.usedW*nst.len), telaTxt=f1(nst.usedW/10)+' × '+f1(nst.len/10)+' cm';
+  $('resumen').innerHTML='Necesitas un trozo de tela de unos <b>'+telaTxt+'</b> (ancho × largo).';
+  $('resumen2').textContent=(m.n>1?m.n+' prendas cortadas a la vez, ':'Para 1 prenda, ')+nst.items.length+' piezas en total. Las piezas ocupan el '+f1(util)+' % de ese trozo; el resto sobra.';
+  $('preview').innerHTML=previewSVG(nst,m.FW);
+  $('pnote').textContent='Piezas de cada prenda: '+pieces.map(p=>p.name.toLowerCase()+' ('+p.qty+')').join(', ')+'. '+info+' Las piezas se colocan sin girar, para respetar el hilo de la tela.';
+  const lp=dst.paths, sw=Math.max(dst.w*10+80,200), sh=Math.max(dst.h*10+80,100);
+  $('labprev').innerHTML='<svg viewBox="'+(-sw/2)+' '+(-sh/2)+' '+sw+' '+sh+'" role="img" aria-label="Vista previa de la etiqueta">'
+    +lp.map(pl=>'<polyline fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" points="'+pl.map(v=>v[0].toFixed(0)+','+(-v[1]).toFixed(0)).join(' ')+'"/>').join('')+'</svg>';
+  $('labnote').textContent='Texto: '+(cleanText(m.name)||'(vacío)')+'. Mide '+f1(dst.w)+' × '+f1(dst.h)+' mm y tiene '+dst.stitches+' puntadas. Es un bordado sencillo de una sola línea, para probar. Para un acabado limpio, hay que digitalizarlo en Wilcom o Hatch.';
+  $('dstinfo').textContent='Para la bordadora Marsew: '+dst.stitches+' puntadas, '+f1(dst.w)+' × '+f1(dst.h)+' mm.';
+  $('nfclabel').textContent='Añadir chip NFC lavable ('+eur(num('nfcp')||0)+')';
+  const rows=[['Tela ('+f1(c.areaM2*10000)+' cm², con un '+f1(c.d*100)+' % que no se usa)',c.tela],['Hilo, velcro y cierres',c.fast],['Chip NFC',c.nfc],['Máquinas ('+f1(c.machMin)+' min)',c.mach],['Trabajo de confección',c.labor]];
+  $('costs').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+eur(r[1])+'</td></tr>').join('')
+    +'<tr><td>Coste de hacerla</td><td>'+eur(c.cost)+'</td></tr>'
+    +'<tr><td>Con un margen del '+f1(num('margin'))+' %</td><td>'+eur(c.pvp)+'</td></tr>'
+    +'<tr class="total"><td>Precio con IVA (21 %)</td><td>'+eur(c.tot)+'</td></tr>';
+  $('pvp').textContent=eur(c.tot);
+  $('pvpsub').textContent='Sin IVA: '+eur(c.pvp)+'. Hacerla te cuesta '+eur(c.cost)+'.';
+  $('bar-pvp').textContent=eur(c.tot); $('bar-tela').textContent=telaTxt;
+  const dxf=buildDXF(nst), sheet=buildSheet(m,pieces,info,nst,dst,c);
+  $('dxfview').value=dxf; $('txtview').value=sheet;
+  CUR={m,pieces,nst,dst,dxf,sheet,svg:buildSVG(nst,m.FW)};
+  if(typeof schedule3D==='function') schedule3D();
+}
+
+/* ---------- acciones ---------- */
+let DL=null, DLSTATE='pending';
+const say=(t,bad)=>{const s=$('status');s.textContent=t;s.style.color=bad?'var(--cut)':'var(--ink)';};
+function syncDL(){
+  const z=$('b-zip');
+  if(DLSTATE==='ok'){z.disabled=false;z.textContent='Descargar todo (.zip)';$('dlnote').textContent='El .zip lleva los cuatro archivos. Antes de cortar tela, comprueba la escala en la máquina con una pieza de prueba.';}
+  else if(DLSTATE==='none'){z.disabled=true;z.textContent='Descarga no disponible aquí';$('dlnote').textContent='En esta vista no se pueden bajar archivos. Abre la página en el navegador, o usa "Otras opciones" para copiar el contenido.';}
+  else{z.disabled=true;z.textContent='Preparando descarga…';}
+  $('b-svg').hidden=DLSTATE!=='ok';
+}
+async function copyText(t,ok){
+  try{await navigator.clipboard.writeText(t);say(ok);}
+  catch(e){say('No se pudo copiar. Abre "Ver el texto" más abajo y cópialo a mano.',true);}
+}
+async function save(name,data){
+  if(!DL) return;
+  try{const r=await DL.save({filename:name,data});say(r.status==='saved'?'Guardado: '+name:'Enviado: '+name);}
+  catch(e){say(e&&e.code==='declined'?'Descarga cancelada.':'No se pudo guardar el archivo en esta vista.',true);}
+}
+function bindActions(){
+  $('b-dxf').onclick=()=>CUR&&copyText(CUR.dxf,'DXF copiado.');
+  $('b-txt').onclick=()=>CUR&&copyText(CUR.sheet,'Hoja de taller copiada.');
+  $('b-svg').onclick=()=>CUR&&save('patron.svg',CUR.svg);
+  $('b-zip').onclick=()=>{
+    if(!CUR) return; const en=new TextEncoder();
+    const zip=buildZip([
+      {name:'patron.dxf',data:en.encode(CUR.dxf)},
+      {name:'patron.svg',data:en.encode(CUR.svg)},
+      {name:'etiqueta.dst',data:CUR.dst.bytes},
+      {name:'hoja_de_taller.txt',data:en.encode(CUR.sheet)}
+    ]);
+    save('taller_'+(cleanText(CUR.m.name)||'pedido').toLowerCase()+'.zip',zip);
+  };
+  $('b-go').onclick=()=>{const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;$('step-files').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});};
+}
+
+/* ---------- guía de medidas (estimación de partida) ---------- */
+/* Rangos en cm por talla de perro, del libro Crochero (cuello, pecho, lomo). Talla según el peso adulto. */
+const DSIZES={XS:{n:[20,25],c:[25,30],b:[15,18]},S:{n:[25,30],c:[30,40],b:[20,25]},M:{n:[30,35],c:[40,50],b:[28,33]},L:{n:[35,40],c:[50,60],b:[36,41]},XL:{n:[40,45],c:[60,71],b:[43,48]}};
+const dsizeFromKg=kg=>kg<2.5?'XS':kg<5.7?'S':kg<9.2?'M':kg<16?'L':kg<=23?'XL':null;
+const growthTxt=kg=>kg<=4.5?'entre los 8 y los 10 meses':kg<=10?'hacia los 10 meses':'hacia los 12 meses';
+const BREEDS={
+  beagle:{n:'Beagle',kg:10},bichon:{n:'Bichón maltés',kg:3.5},border:{n:'Border collie',kg:17},frances:{n:'Bulldog francés',kg:11},
+  caniche:{n:'Caniche toy',kg:3},chihuahua:{n:'Chihuahua',kg:2.3},cocker:{n:'Cocker spaniel',kg:13},corgi:{n:'Corgi galés',kg:12,sp:'long'},
+  jack:{n:'Jack Russell terrier',kg:6.5},pomerania:{n:'Pomerania',kg:2.5},pug:{n:'Pug',kg:8},schnauzer:{n:'Schnauzer mediano',kg:17},
+  shihtzu:{n:'Shih tzu',kg:6},teckel:{n:'Teckel estándar',kg:9,sp:'long'},teckelmini:{n:'Teckel miniatura',kg:4.5,sp:'long'},
+  whippet:{n:'Whippet',kg:12,sp:'deep'},yorkshire:{n:'Yorkshire terrier',kg:3},otro:{n:'Otra raza o mestizo (indica el peso)',kg:null}
+};
+const mid=a=>(a[0]+a[1])/2;
+let GDOG=null;
+function updateGuideDog(){
+  const key=$('g-breed').value, b=BREEDS[key], age=$('g-age').value;
+  $('g-kg-wrap').hidden=key!=='otro';
+  const kg=key==='otro'?parseFloat($('g-kg').value):b.kg, out=$('g-out-dog'), btn=$('g-use-dog');
+  GDOG=null; btn.hidden=true;
+  if(!isFinite(kg)||kg<=0){out.innerHTML='<p>Indica el peso del perro.</p>';return;}
+  const sz=dsizeFromKg(kg);
+  if(!sz){out.innerHTML='<p>Con más de 23 kg, las tablas consultadas no llegan: mide a tu perro con la cinta.</p>';return;}
+  const R=DSIZES[sz], n=mid(R.n), c=mid(R.c), bk=mid(R.b);
+  const who=(key==='otro'?'Perro de unos '+f1(kg)+' kg':b.n+' (unos '+f1(kg)+' kg de adulto)');
+  let h='<p><b>Talla de referencia: '+sz+'.</b> '+who+'.</p>';
+  if(age==='puppy'){
+    h+='<p>Un cachorro cambia de medidas cada pocas semanas, así que no estimamos las suyas: mídelo el mismo día que cortes la tela y deja más espacio extra. Suele terminar de crecer '+growthTxt(kg)+'.</p>';
+    h+='<p>De adulto medirá, de partida: cuello '+f1(n)+' cm, pecho '+f1(c)+' cm y lomo '+f1(bk)+' cm.</p>';
+  }else{
+    h+='<p>Medidas de partida: cuello <b>'+f1(n)+' cm</b>, pecho <b>'+f1(c)+' cm</b>, lomo <b>'+f1(bk)+' cm</b>. Rangos habituales: cuello '+R.n[0]+' a '+R.n[1]+', pecho '+R.c[0]+' a '+R.c[1]+', lomo '+R.b[0]+' a '+R.b[1]+' cm.</p>';
+    if(age==='young') h+='<p>Estas son medidas de adulto. Si todavía crece, ahora será más pequeño: mídelo. Suele terminar de crecer '+growthTxt(kg)+'.</p>';
+    if(age==='senior') h+='<p>Las medidas son estables, pero un perro mayor puede haber ganado o perdido peso: mídelo. Elige cierres fáciles, como el velcro.</p>';
+    GDOG={n:n,c:c,b:bk,ease:age==='young'?3:2};
+    btn.hidden=false; btn.textContent=age==='young'?'Usar estas medidas de adulto':'Usar estas medidas';
+  }
+  if(b&&b.sp==='long') h+='<p>Esta raza tiene el cuerpo largo y las patas cortas: el lomo y el pecho pueden salir distintos de la tabla. Mide siempre.</p>';
+  if(b&&b.sp==='deep') h+='<p>Esta raza tiene el pecho profundo y estrecho: talla por el contorno del pecho, no por el peso. Mide siempre.</p>';
+  out.innerHTML=h;
+}
+/* Tallas europeas de una tabla de tienda (Bergfreunde, SOS): pecho, cintura, cadera en cm. */
+const PTALLAS={
+  w:[['XS','34',82,66,90],['S','36',86,70,94],['M','38/40',92,76,100],['L','40/42',98,82,106],['XL','44',104,88,112]],
+  m:[['S','48',94,82,96],['M','50',98,86,100],['L','52',104,92,106],['XL','54/56',110,98,112],['XXL','58',116,104,118]]
+};
+const COMPS=['Muy delgada/o','Delgada/o','Media/o','Robusta/o','Muy robusta/o'];
+let GHUM=null;
+function fillComps(){
+  const cur=$('g-comp').value||'2';
+  $('g-comp').innerHTML=COMPS.map((t,i)=>'<option value="'+i+'">'+t+' ('+PTALLAS[$('g-body').value][i][0]+')</option>').join('');
+  $('g-comp').value=cur;
+}
+function updateGuideHuman(){
+  const row=PTALLAS[$('g-body').value][parseInt($('g-comp').value,10)];
+  const bust=row[2], waist=row[3], hip=row[4], neck=Math.round(bust*0.40*2)/2, sh=Math.round(bust*0.435*2)/2;
+  GHUM={bust:bust,waist:waist,hip:hip,neck:neck,sh:sh};
+  $('g-out-human').innerHTML='<p><b>Talla de referencia: '+row[0]+'</b> (talla '+row[1]+').</p>'
+    +'<p>Medidas de partida: pecho <b>'+bust+' cm</b>, cintura <b>'+waist+' cm</b>, cadera <b>'+hip+' cm</b>.</p>'
+    +'<p>El cuello ('+f1(neck)+' cm) y los hombros ('+f1(sh)+' cm) son una estimación a partir del pecho. El largo de la camiseta, de la manga y de la falda los eliges tú.</p>';
+}
+function syncGuide(){
+  const dog=$('para').value==='dog';
+  if(typeof CAM!=='undefined'&&CAM.para!==$('para').value){CAM.para=$('para').value;camReset();}
+  $('guide-dog').hidden=!dog; $('guide-human').hidden=dog;
+}
+function initGuide(){
+  $('g-breed').innerHTML=Object.keys(BREEDS).map(k=>'<option value="'+k+'">'+BREEDS[k].n+'</option>').join('');
+  $('g-breed').value='chihuahua'; $('g-comp').value='2'; fillComps(); $('g-comp').value='2';
+  ['g-breed','g-kg','g-age'].forEach(id=>$(id).addEventListener('input',updateGuideDog));
+  $('g-body').addEventListener('input',()=>{fillComps();updateGuideHuman();});
+  $('g-comp').addEventListener('input',updateGuideHuman);
+  $('g-use-dog').onclick=()=>{
+    if(!GDOG) return;
+    $('neck').value=f1(GDOG.n).replace(',','.'); $('chest').value=f1(GDOG.c).replace(',','.'); $('back').value=f1(GDOG.b).replace(',','.'); $('ease').value=GDOG.ease; touch(['neck','chest','back','ease']);
+    render(); say_g('g-out-dog','Medidas rellenadas. Revísalas y ajusta con tu cinta.');
+  };
+  $('g-use-human').onclick=()=>{
+    if(!GHUM) return;
+    $('bust').value=GHUM.bust; $('waist').value=GHUM.waist; $('hip').value=GHUM.hip; $('neck').value=GHUM.neck; $('shoulder').value=GHUM.sh; touch(['bust','waist','hip','neck','shoulder']);
+    render(); say_g('g-out-human','Medidas rellenadas. Revísalas y ajusta con tu cinta.');
+  };
+  updateGuideDog(); updateGuideHuman(); syncGuide();
+}
+function say_g(id,t){const o=$(id);o.querySelectorAll('.ok').forEach(e=>e.remove());const p=document.createElement('p');p.className='ok';p.innerHTML='<b>'+t+'</b>';o.appendChild(p);}
+
+/* ---------- vista 3D (Three.js, versión fijada) ---------- */
+const THREE_URL='https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js';
+const ORBIT_URL='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js';
+function loadScript(u){return new Promise((res,rej)=>{const e=document.createElement('script');e.src=u;e.onload=res;e.onerror=()=>rej(new Error('load '+u));document.head.appendChild(e);});}
+const FABRICS=[['#2f6f8f','Azul'],['#1c1f26','Negro'],['#b3382c','Rojo'],['#3f7d4e','Verde'],['#d9cfb8','Crudo'],['#8a8f96','Gris']];
+let V3=null, V3state='idle', V3timer=null, V3key='', V3color='#2f6f8f', V3pat='plain', V3need=true;
+const ellRx=(C,k)=>C/(Math.PI*(3*(1+k)-Math.sqrt((3+k)*(1+3*k))));
+const cosI=(a,b,t)=>a+(b-a)*(1-Math.cos(Math.PI*t))/2;
+/* pts ordenados por v ascendente, cada uno {v,rx,rz,cx?,cz?,cy?}; interpolación suave */
+function prof(pts,v){
+  const f=pts[0], l=pts[pts.length-1];
+  if(v<=f.v) return f; if(v>=l.v) return l;
+  for(let i=1;i<pts.length;i++){ if(v<=pts[i].v){
+    const a=pts[i-1], b=pts[i], t=(v-a.v)/(b.v-a.v);
+    return {rx:cosI(a.rx,b.rx,t),rz:cosI(a.rz,b.rz,t),cx:cosI(a.cx||0,b.cx||0,t),cy:cosI(a.cy||0,b.cy||0,t)};
+  }}
+}
+const ringC=(C,k)=>{const rx=ellRx(C,k);return {rx:rx,rz:rx*k};};
+
+function loft(T,n,segs,a0,a1,posFn,mat,uCm,vFn){
+  const pos=[],uv=[],idx=[];
+  for(let i=0;i<n;i++) for(let j=0;j<=segs;j++){
+    const th=a0+(a1-a0)*j/segs, q=posFn(i,th);
+    pos.push(q[0],q[1],q[2]); uv.push((j/segs)*uCm(i),vFn(i));
+  }
+  for(let i=0;i<n-1;i++) for(let j=0;j<segs;j++){const a=i*(segs+1)+j,b=a+1,c=a+segs+1,d=c+1;idx.push(a,c,b,b,c,d);}
+  const g=new T.BufferGeometry();
+  g.setAttribute('position',new T.Float32BufferAttribute(pos,3)); g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));
+  g.setIndex(idx); g.computeVertexNormals();
+  return new T.Mesh(g,mat);
+}
+function cyl(T,r0,r1,h,mat,seg){return new T.Mesh(new T.CylinderGeometry(r0,r1,h,seg||24,1,true),mat);}
+function between(T,mesh,a,b){ /* coloca un cilindro (eje Y) entre dos puntos a (arriba) y b (abajo) */
+  const A=new T.Vector3(...a), B=new T.Vector3(...b), d=A.clone().sub(B), L=d.length();
+  mesh.position.copy(A.clone().add(B).multiplyScalar(0.5));
+  mesh.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());
+  mesh.scale.set(1,L/mesh.geometry.parameters.height,1);
+}
+function texFor(T){
+  if(V3pat==='plain') return null;
+  const c=document.createElement('canvas'); c.width=c.height=256; const g=c.getContext('2d');
+  g.fillStyle=V3color; g.fillRect(0,0,256,256);
+  g.fillStyle='rgba(255,255,255,0.55)';
+  if(V3pat==='stripes'){ for(let x=0;x<256;x+=64) g.fillRect(x,0,32,256); }
+  else { for(let x=0;x<256;x+=64) g.fillRect(x,0,16,256); for(let y=0;y<256;y+=64) g.fillRect(0,y,256,16); g.fillStyle='rgba(0,0,0,0.18)'; g.fillRect(0,0,256,0); }
+  const t=new T.CanvasTexture(c); t.wrapS=t.wrapT=T.RepeatWrapping; return t;
+}
+function fabricMat(T){
+  const map=texFor(T);
+  return new T.MeshStandardMaterial({color:map?0xffffff:new T.Color(V3color),map:map,side:T.DoubleSide,roughness:0.85,metalness:0});
+}
+
+/* ----- maniquí y prendas de persona (cm, y hacia arriba) ----- */
+function humanBuild(T,grp,m,gid){
+  const g=(v,d)=>isFinite(v)&&v>0?v/10:d;
+  const B=g(m.B,92),Wa=g(m.Wa,74),Hi=g(m.Hi,98),S=g(m.S,40),N=g(m.N,37),e=(isFinite(m.e)?m.e:0)/10;
+  const skin=new T.MeshStandardMaterial({color:0xd7d0c6,roughness:0.9});
+  const rn=N/(2*Math.PI);
+  const mp=[ {v:80,...ringC(Hi*0.93,0.72)},{v:92,...ringC(Hi,0.72)},{v:107,...ringC(Wa,0.78)},{v:124,...ringC(B,0.74)},
+             {v:133,rx:S/2*0.88,rz:8.0},{v:139,rx:S/2*0.80,rz:6.2},{v:141.2,rx:rn+0.3,rz:rn+0.3} ];
+  const nr=50, y0=80, y1=141.2, segs=40;
+  const ys=i=>y0+(y1-y0)*i/(nr-1);
+  grp.add(loft(T,nr,segs,0,Math.PI*2,(i,th)=>{const p=prof(mp,ys(i));return [p.rx*Math.cos(th),ys(i),p.rz*Math.sin(th)];},skin,i=>1,i=>0));
+  const neck=cyl(T,rn+0.3,rn+0.3,10,skin,24); neck.position.set(0,146,0); grp.add(neck);
+  const head=new T.Mesh(new T.SphereGeometry(9.5,24,18),skin); head.scale.set(0.85,1.1,0.95); head.position.set(0,157.5,0.5); grp.add(head);
+  const side=[-1,1];
+  const hipRx=ringC(Hi,0.72).rx, thighR=Hi*0.088, kneeR=Hi*0.056;
+  side.forEach(sg=>{
+    const hx=sg*hipRx*0.45;
+    const th=cyl(T,thighR,kneeR,35,skin,20); th.position.set(hx,62.5,0); grp.add(th);
+    const cf=cyl(T,kneeR,3.2,39,skin,20); cf.position.set(hx,25.5,0); grp.add(cf);
+    const ft=new T.Mesh(new T.BoxGeometry(8,5,22),skin); ft.position.set(hx,3,5); grp.add(ft);
+  });
+  const rb=Math.max(3.3,0.30*B/(2*Math.PI)), armLen=56, al=18*Math.PI/180;
+  const arms=side.map(sg=>{
+    const o=[sg*(S/2-2.6),136.2,0], dir=[sg*Math.sin(al),-Math.cos(al),0];
+    const end=[o[0]+dir[0]*armLen,o[1]+dir[1]*armLen,0];
+    const c=cyl(T,rb,rb*0.72,armLen,skin,20); between(T,c,o,end); grp.add(c);
+    const hd=new T.Mesh(new T.SphereGeometry(3,14,12),skin); hd.position.set(end[0]+dir[0]*1.5,end[1]+dir[1]*1.5,0); grp.add(hd);
+    return {o,dir};
+  });
+  const fab=fabricMat(T), off=0.7+e/(2*Math.PI);
+  if(gid==='tee'){
+    const tl=g(m.Lt,65), Ls=g(m.Ls,22), hemY=Math.max(25,139-tl);
+    const n=60, yTop=141.8;
+    const yy=i=>yTop+(hemY-yTop)*i/(n-1);
+    const garment=(i,th)=>{const y=yy(i), p=prof(mp,y), flare=y<80?Math.min(2.5,(80-y)*0.06):0;return [(p.rx+off+flare)*Math.cos(th),y,(p.rz+off+flare)*Math.sin(th)];};
+    grp.add(loft(T,n,segs,0,Math.PI*2,garment,fab,i=>2*Math.PI*(prof(mp,yy(i)).rx+prof(mp,yy(i)).rz)/2/12,i=>yy(i)/12));
+    arms.forEach(a=>{
+      const r0=rb+0.8+e/(2*Math.PI)*0.9, dEnd=Math.min(Ls,armLen), r1=(rb-(rb-rb*0.72)*dEnd/armLen)+0.8+e/(2*Math.PI)*0.7;
+      const sl=cyl(T,r0,r1,dEnd+1.2,fab,24);
+      const st=[a.o[0]-a.dir[0]*1.2,a.o[1]-a.dir[1]*1.2,0], en=[a.o[0]+a.dir[0]*dEnd,a.o[1]+a.dir[1]*dEnd,0];
+      between(T,sl,st,en); grp.add(sl);
+    });
+  } else if(gid==='skirt'){
+    const sl=g(m.Lk,55), yw=107, hemY=Math.max(12,yw-sl), eHip=Hi+e;
+    let pts=[{v:92,...ringC(eHip,0.74)},{v:yw,...ringC(Wa+1.5,0.78)}];
+    if(hemY<92) pts.unshift({v:hemY,...ringC(eHip*1.12,0.9)});
+    const n=50, yy=i=>yw+(hemY-yw)*i/(n-1);
+    grp.add(loft(T,n,segs,0,Math.PI*2,(i,th)=>{const p=prof(pts,yy(i));return [p.rx*Math.cos(th),yy(i),p.rz*Math.sin(th)];},fab,i=>2*Math.PI*(prof(pts,yy(i)).rx+prof(pts,yy(i)).rz)/2/12,i=>yy(i)/12));
+  }
+  return {target:[0,84,0],dist:320};
+}
+
+/* ----- perro (z hacia delante, y hacia arriba) ----- */
+function dogBuild(T,grp,m,gid){
+  const g=(v,d)=>isFinite(v)&&v>0?v/10:d;
+  const N=g(m.N,32),C=g(m.C,45),L=g(m.L,32),e=(isFinite(m.e)?m.e:0)/10;
+  const fur=new T.MeshStandardMaterial({color:0xcdbfa8,roughness:0.95});
+  const dark=new T.MeshStandardMaterial({color:0x2a2622,roughness:0.6});
+  const rn=N/(2*Math.PI), rC=ringC(C,1.18), legL=2*rC.rz, yTop=legL+2*rC.rz;
+  const neckLen=0.28*L, zN=0.5*L;
+  const mk=(z,circ,k,cyAdd)=>{const r=ringC(circ,k);return {v:z,rx:r.rx,rz:r.rz,cy:yTop-r.rz+(cyAdd||0)};};
+  const bp=[ mk(-0.5*L,0.70*C,1.0), mk(-0.15*L,0.82*C,1.05), mk(0.2*L,C,1.18), mk(zN,Math.max(N*1.12,N+3),1.0), mk(zN+neckLen,N*0.92,1.0,0.25*neckLen) ];
+  const nr=60, z0=-0.5*L, z1=zN+neckLen, segs=36, zs=i=>z0+(z1-z0)*i/(nr-1);
+  const P=z=>prof(bp,z);
+  const at=(z,th,o)=>{const p=P(z);return [(p.rx+o)*Math.cos(th),p.cy+(p.rz+o)*Math.sin(th),z];};
+  grp.add(loft(T,nr,segs,0,Math.PI*2,(i,th)=>at(zs(i),th,0),fur,i=>1,i=>0));
+  const endP=P(z1), hr=rn*1.15+1, hz=z1+hr*0.5, hy=endP.cy+0.15*hr;
+  const head=new T.Mesh(new T.SphereGeometry(hr,24,18),fur); head.scale.set(1.0,0.95,1.15); head.position.set(0,hy,hz); grp.add(head);
+  const snout=new T.Mesh(new T.CylinderGeometry(hr*0.42,hr*0.5,hr*1.1,18),fur); snout.rotation.x=Math.PI/2; snout.position.set(0,hy-hr*0.2,hz+hr*1.15); grp.add(snout);
+  const nose=new T.Mesh(new T.SphereGeometry(hr*0.2,12,10),dark); nose.position.set(0,hy-hr*0.1,hz+hr*1.72); grp.add(nose);
+  [-1,1].forEach(sg=>{
+    const eye=new T.Mesh(new T.SphereGeometry(hr*0.13,10,8),dark); eye.position.set(sg*hr*0.46,hy+hr*0.24,hz+hr*0.93); grp.add(eye);
+    const ear=new T.Mesh(new T.ConeGeometry(hr*0.4,hr*0.9,12),fur); ear.position.set(sg*hr*0.62,hy+hr*0.85,hz-hr*0.1); ear.rotation.z=-sg*0.35; grp.add(ear);
+  });
+  const lr=Math.max(1.4,C/(2*Math.PI)*0.22);
+  const legs=[[0.18*L,0.62*rC.rx],[-0.40*L,0.6*ringC(0.76*C,1.02).rx]];
+  legs.forEach(l=>{[-1,1].forEach(sg=>{
+    const p=P(l[0]), topY=p.cy-p.rz*0.7;
+    const lg=cyl(T,lr*1.15,lr*0.85,topY,fur,14); lg.position.set(sg*l[1],topY/2,l[0]); grp.add(lg);
+    const paw=new T.Mesh(new T.SphereGeometry(lr*1.15,12,10),fur); paw.scale.set(1,0.7,1.3); paw.position.set(sg*l[1],lr*0.5,l[0]+lr*0.4); grp.add(paw);
+  });});
+  const tb=P(-0.5*L), tl=0.45*L, tail=cyl(T,lr*0.7,lr*0.45,tl,fur,12);
+  between(T,tail,[0,tb.cy+tb.rz*0.5,-0.5*L],[0,tb.cy+tb.rz*0.5+tl*0.62,-0.5*L-tl*0.78]); grp.add(tail);
+  const fab=fabricMat(T), off=0.9+e/(2*Math.PI);
+  const uc=z=>2*Math.PI*(P(z).rx+P(z).rz)/2/12;
+  if(gid==='dogCoat'){
+    const nb=50, zb=i=>zN+(-0.5*L-zN)*i/(nb-1);
+    grp.add(loft(T,nb,segs,0,Math.PI,(i,th)=>at(zb(i),th,off),fab,i=>uc(zb(i))/2,i=>zb(i)/12));
+    const za=0.28*L, zc=za-0.35*L, nf=16, zf=i=>za+(zc-za)*i/(nf-1);
+    grp.add(loft(T,nf,segs,Math.PI,2*Math.PI,(i,th)=>at(zf(i),th,off+0.3),fab,i=>uc(zf(i))/2,i=>zf(i)/12));
+    const nk=8, zk=i=>zN+3-4*i/(nk-1);
+    grp.add(loft(T,nk,segs,0,2*Math.PI,(i,th)=>at(zk(i),th,off+0.5),fab,i=>uc(zk(i)),i=>zk(i)/12));
+  } else if(gid==='dogBandana'){
+    const nk=8, zk=i=>zN+2.5-3.5*i/(nk-1);
+    grp.add(loft(T,nk,segs,0,2*Math.PI,(i,th)=>at(zk(i),th,off+0.3),fab,i=>uc(zk(i)),i=>zk(i)/12));
+    const pN=P(zN), base=N+e+24, hang=Math.min(0.3*base,0.9*2*rC.rz);
+    const A=[-(pN.rx+off+0.3)*0.98,pN.cy-pN.rz*0.2,zN+0.3], Bp=[(pN.rx+off+0.3)*0.98,pN.cy-pN.rz*0.2,zN+0.3], Q=[0,pN.cy-pN.rz-hang,zN+1.8];
+    const R=10,Sx=12,pos=[],uv=[],idx=[];
+    for(let r=0;r<=R;r++){const t=r/R;for(let c=0;c<=Sx;c++){const u=c/Sx;
+      const lx=A[0]+(Q[0]-A[0])*t, rx_=Bp[0]+(Q[0]-Bp[0])*t, x=lx+(rx_-lx)*u, y=A[1]+(Q[1]-A[1])*t, z=A[2]+(Q[2]-A[2])*t+0.8*Math.sin(Math.PI*u)*(1-t);
+      pos.push(x,y,z); uv.push(u*4,t*4);}}
+    for(let r=0;r<R;r++)for(let c=0;c<Sx;c++){const a=r*(Sx+1)+c,b=a+1,cc=a+Sx+1,d=cc+1;idx.push(a,cc,b,b,cc,d);}
+    const gg=new T.BufferGeometry(); gg.setAttribute('position',new T.Float32BufferAttribute(pos,3)); gg.setAttribute('uv',new T.Float32BufferAttribute(uv,2)); gg.setIndex(idx); gg.computeVertexNormals();
+    grp.add(new T.Mesh(gg,fab));
+  }
+  return {target:[0,yTop*0.5,0.25*L],dist:Math.max(100,2.8*L+2.1*yTop)};
+}
+
+function disposeGroup(grp){
+  while(grp.children.length){const c=grp.children.pop(); if(c.geometry) c.geometry.dispose(); if(c.material){ if(c.material.map) c.material.map.dispose(); c.material.dispose(); }}
+}
+function setView(name){
+  if(!V3) return; const d=V3.dist, t=V3.target, T=THREE;
+  const v={front:[0,0.12,1],side:[1,0.12,0],back:[0,0.12,-1]}[name]||[0,0.12,1];
+  V3.cam.position.set(t[0]+v[0]*d,t[1]+v[1]*d,t[2]+v[2]*d); V3.ctl.target.set(t[0],t[1],t[2]); V3.ctl.update(); V3need=true;
+  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===name)));
+}
+function build3D(){
+  if(!V3) return;
+  const m=readInputs(), G=GARMENTS[m.g]; if(!G) return;
+  disposeGroup(V3.grp);
+  let info;
+  try{ info=G.para==='dog'?dogBuild(THREE,V3.grp,m,m.g):humanBuild(THREE,V3.grp,m,m.g); }
+  catch(err){ $('v3msg').hidden=false; $('v3msg').textContent='No se pudo dibujar la prenda con estas medidas.'; return; }
+  $('v3msg').hidden=true;
+  V3.target=info.target; V3.dist=info.dist;
+  const key=m.g; if(key!==V3key){V3key=key; setView('front');}
+  V3need=true;
+}
+function schedule3D(){ if(V3){clearTimeout(V3timer);V3timer=setTimeout(build3D,90);} }
+function renderLoop(){
+  if(!V3) return;
+  if(V3.visible && (V3need||V3.ctl.autoRotate)){ V3.ctl.update(); V3.renderer.render(V3.scene,V3.cam); V3need=false; }
+  requestAnimationFrame(renderLoop);
+}
+async function init3D(){
+  if(V3state!=='idle') return; V3state='loading';
+  $('v3msg').textContent='Cargando la vista en 3D…';
+  try{
+    await loadScript(THREE_URL); await loadScript(ORBIT_URL);
+    const T=THREE, host=$('v3'), cv=document.createElement('canvas'); host.appendChild(cv);
+    const renderer=new T.WebGLRenderer({canvas:cv,antialias:true,alpha:true}); renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    const scene=new T.Scene(), cam=new T.PerspectiveCamera(35,1,1,2000);
+    scene.add(new T.HemisphereLight(0xffffff,0x8c8c96,0.95));
+    const dl=new T.DirectionalLight(0xffffff,0.8); dl.position.set(120,220,160); scene.add(dl);
+    const dl2=new T.DirectionalLight(0xffffff,0.35); dl2.position.set(-150,80,-160); scene.add(dl2);
+    const grp=new T.Group(); scene.add(grp);
+    const ctl=new T.OrbitControls(cam,cv); ctl.enableDamping=false; ctl.enablePan=false; ctl.autoRotateSpeed=2.2; ctl.minPolarAngle=0.2; ctl.maxPolarAngle=Math.PI*0.62;
+    ctl.addEventListener('change',()=>{V3need=true;});
+    V3={renderer,scene,cam,grp,ctl,target:[0,88,0],dist:250,visible:true};
+    const fit=()=>{const w=host.clientWidth,h=host.clientHeight; if(!w||!h) return; renderer.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix(); V3need=true;};
+    new ResizeObserver(fit).observe(host); fit();
+    new IntersectionObserver(es=>{V3.visible=es[0].isIntersecting; if(V3.visible) V3need=true;}).observe(host);
+    V3state='ready'; build3D(); renderLoop();
+  }catch(err){
+    V3state='error'; V3=null; $('v3msg').hidden=false;
+    $('v3msg').textContent='No se pudo cargar la vista en 3D. Comprueba la conexión o que tu navegador admita WebGL.';
+  }
+}
+function initV3UI(){
+  $('sw').innerHTML=FABRICS.map((f,i)=>'<button type="button" class="swb" data-c="'+f[0]+'" style="background:'+f[0]+'" aria-label="'+f[1]+'" aria-pressed="'+(i===0)+'"></button>').join('');
+  $('sw').querySelectorAll('.swb').forEach(b=>b.addEventListener('click',()=>{ V3color=b.dataset.c; $('v3col').value=V3color; syncSw(); build3D(); }));
+  $('v3col').addEventListener('input',()=>{V3color=$('v3col').value;syncSw();build3D();});
+  $('v3pat').addEventListener('input',()=>{V3pat=$('v3pat').value;build3D();});
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  $('v3spin').addEventListener('click',()=>{ if(!V3) return; const on=!V3.ctl.autoRotate; V3.ctl.autoRotate=on; $('v3spin').setAttribute('aria-pressed',String(on)); V3need=true; });
+  const io=new IntersectionObserver(es=>{ if(es[0].isIntersecting){ init3D(); io.disconnect(); } },{rootMargin:'300px'}); io.observe($('sec3d'));
+}
+function syncSw(){document.querySelectorAll('.swb').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.c.toLowerCase()===V3color.toLowerCase())));}
+
+/* ---------- medidas con fotos ---------- */
+const REF2=[{id:'ra',t:'Referencia: toca un extremo del objeto (el lado largo)'},{id:'rb',t:'Referencia: toca el otro extremo del mismo lado'}];
+const CAMSEQ={
+  dog:{
+    side:REF2.concat([{id:'nb',t:'Base del cuello, por el lomo (donde apoya el collar)'},{id:'tb',t:'Base de la cola, por el lomo'},
+      {id:'ct',t:'Pecho: parte de arriba, justo detrás de la pata delantera'},{id:'cb',t:'Pecho: parte de abajo, en la línea del esternón'},
+      {id:'nt',t:'Cuello: parte de arriba, donde apoya el collar'},{id:'nu',t:'Cuello: parte de abajo, en la garganta'}]),
+    front:REF2.concat([{id:'nl',t:'Cuello: lado izquierdo de la foto, donde apoya el collar'},{id:'nr',t:'Cuello: lado derecho de la foto'},
+      {id:'cl',t:'Pecho: lado izquierdo de la foto, en la parte más ancha'},{id:'cr',t:'Pecho: lado derecho de la foto'}])
+  },
+  human:{
+    side:REF2.concat([{id:'bf',t:'Pecho: punto más saliente, delante'},{id:'bb',t:'Pecho: espalda, a la misma altura'},
+      {id:'wf',t:'Cintura: delante'},{id:'wb',t:'Cintura: espalda, a la misma altura'},
+      {id:'hf',t:'Cadera: delante, en la parte más ancha'},{id:'hb',t:'Cadera: espalda, a la misma altura'}]),
+    front:REF2.concat([{id:'sl',t:'Hombros: punta del hombro izquierdo de la foto'},{id:'sr',t:'Hombros: punta del hombro derecho de la foto'},
+      {id:'bl',t:'Pecho: lado izquierdo de la foto, a la altura del pecho'},{id:'br',t:'Pecho: lado derecho de la foto'},
+      {id:'wl',t:'Cintura: lado izquierdo de la foto'},{id:'wr',t:'Cintura: lado derecho de la foto'},
+      {id:'hl',t:'Cadera: lado izquierdo de la foto'},{id:'hr',t:'Cadera: lado derecho de la foto'}])
+  }
+};
+let CAM={para:'dog',stages:{side:null,front:null},out:null}, OV=null, CAMSTAGE=null;
+const refCm=()=>$('c-ref').value==='custom'?parseFloat($('c-custom').value):parseFloat($('c-ref').value);
+const ellC=(a,b)=>Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)));  /* semiejes en cm */
+const half=v=>Math.round(v*2)/2;
+function camReset(){ CAM.stages={side:null,front:null}; CAM.out=null; camStatus(); camCompute(); }
+function camStatus(){
+  ['side','front'].forEach(k=>{const st=CAM.stages[k]; $('c-st-'+k).textContent=st?'Lista: '+st.pts.length+' puntos tocados':'Sin foto';});
+}
+function dd(st,a,b){const A=st.pts[st.ids.indexOf(a)],B=st.pts[st.ids.indexOf(b)];return Math.hypot(A.x-B.x,A.y-B.y)/st.scale;}
+function camCompute(){
+  const out=$('c-out'), btn=$('c-use'), S=CAM.stages.side, F=CAM.stages.front, dog=CAM.para==='dog';
+  CAM.out=null; btn.hidden=true;
+  if(!S&&!F){out.innerHTML='<p>Haz al menos una foto para ver las medidas.</p>';return;}
+  const L=[], W=[]; let use={};
+  const chk=(name,v,lo,hi)=>{ if(v<lo||v>hi) W.push(name+' sale '+f1(v)+' cm, un valor poco habitual. Repite esa foto.'); };
+  if(dog){
+    if(S){ const lomo=dd(S,'nb','tb'); L.push('Largo del lomo: <b>'+f1(lomo)+' cm</b> (foto de lado)'); chk('El lomo',lomo,10,90); use.back=half(lomo); S.m={lomo:lomo,cd:dd(S,'ct','cb'),nd:dd(S,'nt','nu')}; }
+    if(F){ F.m={nw:dd(F,'nl','nr'),cw:dd(F,'cl','cr')}; }
+    if(S&&F){
+      const neck=ellC(F.m.nw/2,S.m.nd/2), chest=ellC(F.m.cw/2,S.m.cd/2);
+      L.push('Cuello: <b>'+f1(neck)+' cm</b> (ancho '+f1(F.m.nw)+', grosor '+f1(S.m.nd)+')'); L.push('Pecho: <b>'+f1(chest)+' cm</b> (ancho '+f1(F.m.cw)+', grosor '+f1(S.m.cd)+')');
+      chk('El cuello',neck,12,70); chk('El pecho',chest,20,110); use.neck=half(neck); use.chest=half(chest);
+    } else if(S&&!F) L.push('Falta la foto de frente para calcular cuello y pecho.');
+    else if(F&&!S) L.push('Falta la foto de lado para calcular lomo, cuello y pecho.');
+  } else {
+    if(F){ F.m={sh:dd(F,'sl','sr'),bw:dd(F,'bl','br'),ww:dd(F,'wl','wr'),hw:dd(F,'hl','hr')}; L.push('Ancho de hombros: <b>'+f1(F.m.sh)+' cm</b> (foto de frente)'); chk('Los hombros',F.m.sh,25,60); use.shoulder=half(F.m.sh); }
+    if(S){ S.m={bd:dd(S,'bf','bb'),wd:dd(S,'wf','wb'),hd:dd(S,'hf','hb')}; }
+    if(S&&F){
+      const bust=ellC(F.m.bw/2,S.m.bd/2), waist=ellC(F.m.ww/2,S.m.wd/2), hip=ellC(F.m.hw/2,S.m.hd/2);
+      L.push('Pecho: <b>'+f1(bust)+' cm</b> (ancho '+f1(F.m.bw)+', fondo '+f1(S.m.bd)+')'); L.push('Cintura: <b>'+f1(waist)+' cm</b> (ancho '+f1(F.m.ww)+', fondo '+f1(S.m.wd)+')'); L.push('Cadera: <b>'+f1(hip)+' cm</b> (ancho '+f1(F.m.hw)+', fondo '+f1(S.m.hd)+')');
+      chk('El pecho',bust,60,160); chk('La cintura',waist,45,150); chk('La cadera',hip,70,170);
+      use.bust=half(bust); use.waist=half(waist); use.hip=half(hip); use.neck=half(bust*0.40);
+      L.push('El cuello se estima a partir del pecho: '+f1(use.neck)+' cm.');
+    } else if(F&&!S) L.push('Falta la foto de lado para calcular pecho, cintura y cadera.');
+    else if(S&&!F) L.push('Faltan los hombros y los anchos: hace falta la foto de frente.');
+  }
+  let h=L.map(t=>'<p>'+t+'</p>').join('')+W.map(t=>'<p><b>Ojo:</b> '+t+'</p>').join('');
+  if(Object.keys(use).length) h+='<p>Compáralo con la cinta: una foto no es tan precisa.</p>';
+  out.innerHTML=h;
+  if(Object.keys(use).length){CAM.out=use;btn.hidden=false;}
+}
+function camApply(){
+  const u=CAM.out; if(!u) return;
+  const map={neck:'neck',chest:'chest',back:'back',bust:'bust',waist:'waist',hip:'hip',shoulder:'shoulder'};
+  Object.keys(u).forEach(k=>{ if(map[k]&&$(map[k])){ $(map[k]).value=String(u[k]); touch([map[k]]); } });
+  render();
+  const o=$('c-out'); o.querySelectorAll('.ok').forEach(e=>e.remove()); const p=document.createElement('p'); p.className='ok'; p.innerHTML='<b>Medidas rellenadas. Revísalas con la cinta.</b>'; o.appendChild(p);
+}
+function loadPhoto(file){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{
+      const MAX=1400, k=Math.min(1,MAX/Math.max(img.naturalWidth,img.naturalHeight));
+      const c=document.createElement('canvas'); c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c);
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('img'));};
+    img.src=url;
+  });
+}
+/* ----- superposición para tocar los puntos ----- */
+function ovFit(){
+  if(!OV) return; const st=$('mov-stage'), cv=$('mov-cv'), W=st.clientWidth, H=st.clientHeight; if(!W||!H) return;
+  const k=Math.min(W/OV.bg.width,H/OV.bg.height); cv.style.width=Math.floor(OV.bg.width*k)+'px'; cv.style.height=Math.floor(OV.bg.height*k)+'px';
+}
+function ovPos(e){const cv=$('mov-cv'),r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height};}
+function ovScale(){
+  if(!OV||OV.pts.length<2) return null; const a=OV.pts[0],b=OV.pts[1], d=Math.hypot(a.x-b.x,a.y-b.y), cm=refCm();
+  return d>0&&cm>0?d/cm:null;
+}
+function ovDraw(){
+  const cv=$('mov-cv'), g=cv.getContext('2d'), w=cv.width; g.drawImage(OV.bg,0,0);
+  const r=Math.max(6,w/130), lw=Math.max(2,w/420), sc=ovScale();
+  for(let i=0;i+1<OV.pts.length;i+=2){
+    const a=OV.pts[i],b=OV.pts[i+1];
+    g.lineWidth=lw+2; g.strokeStyle='rgba(0,0,0,.7)'; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+    g.lineWidth=lw; g.strokeStyle=i===0?'#ffb020':'#ffffff'; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+    if(sc){ const txt=f1(Math.hypot(a.x-b.x,a.y-b.y)/sc)+' cm', mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      g.font='600 '+Math.round(w/38)+'px sans-serif'; g.lineWidth=4; g.strokeStyle='rgba(0,0,0,.8)'; g.strokeText(txt,mx+8,my-8); g.fillStyle='#fff'; g.fillText(txt,mx+8,my-8); }
+  }
+  OV.pts.forEach((p,i)=>{
+    g.beginPath(); g.arc(p.x,p.y,r,0,Math.PI*2); g.fillStyle=i<2?'#ffb020':'#00e0b0'; g.fill(); g.lineWidth=2; g.strokeStyle='#000'; g.stroke();
+    g.font='700 '+Math.round(r*1.5)+'px sans-serif'; g.fillStyle='#000'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(String(i+1),p.x,p.y+1);
+  });
+}
+function ovLoupe(p,e){
+  const lp=$('mov-loupe'), g=lp.getContext('2d'), z=34; lp.hidden=false;
+  const st=$('mov-stage').getBoundingClientRect(); lp.style.left=(e.clientX-st.left<st.width/2)?'auto':'8px'; lp.style.right=(e.clientX-st.left<st.width/2)?'8px':'auto';
+  g.clearRect(0,0,120,120); g.drawImage(OV.bg,p.x-z/2,p.y-z/2,z,z,0,0,120,120);
+  g.strokeStyle='#ff2d55'; g.lineWidth=2; g.beginPath(); g.moveTo(60,38); g.lineTo(60,82); g.moveTo(38,60); g.lineTo(82,60); g.stroke();
+}
+function ovUi(){
+  const n=OV.pts.length, t=OV.seq.length;
+  $('mov-prompt').textContent=n<t?'Punto '+(n+1)+' de '+t+': '+OV.seq[n].t:'Todos los puntos puestos. Puedes arrastrar cualquiera para afinarlo.';
+  $('mov-count').textContent=n+' de '+t+' puntos';
+  $('mov-done').disabled=n<t; $('mov-undo').disabled=n===0;
+}
+function ovOpen(stage,bg){
+  const seq=CAMSEQ[CAM.para][stage]; OV={stage,bg,seq,pts:[],drag:null};
+  const cv=$('mov-cv'); cv.width=bg.width; cv.height=bg.height;
+  $('mov').hidden=false; document.body.style.overflow='hidden';
+  $('mov-title').textContent=stage==='side'?'Foto de lado':'Foto de frente';
+  ovFit(); ovDraw(); ovUi(); $('mov-close').focus();
+}
+function ovClose(){ $('mov').hidden=true; document.body.style.overflow=''; $('mov-loupe').hidden=true; OV=null; }
+function ovBind(){
+  const cv=$('mov-cv');
+  cv.addEventListener('pointerdown',e=>{
+    if(!OV) return; e.preventDefault(); try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    const p=ovPos(e); let k=-1;
+    if(OV.pts.length<OV.seq.length){ OV.pts.push(p); k=OV.pts.length-1; }          /* mientras faltan puntos, cada toque pone uno nuevo */
+    else{ let best=24*cv.width/cv.getBoundingClientRect().width;                    /* con todos puestos, se puede arrastrar el más cercano */
+      OV.pts.forEach((q,i)=>{const d=Math.hypot(q.x-p.x,q.y-p.y); if(d<best){best=d;k=i;}});
+      if(k<0) return; }
+    OV.drag=k; ovLoupe(OV.pts[k],e); ovDraw(); ovUi();
+  });
+  cv.addEventListener('pointermove',e=>{ if(!OV||OV.drag==null) return; const p=ovPos(e); OV.pts[OV.drag]=p; ovLoupe(p,e); ovDraw(); });
+  const up=()=>{ if(!OV) return; OV.drag=null; $('mov-loupe').hidden=true; ovDraw(); ovUi(); };
+  cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+  $('mov-undo').onclick=()=>{ if(OV&&OV.pts.length){OV.pts.pop();ovDraw();ovUi();} };
+  $('mov-close').onclick=ovClose;
+  $('mov-done').onclick=()=>{
+    if(!OV||OV.pts.length<OV.seq.length) return;
+    const sc=ovScale(), a=OV.pts[0], b=OV.pts[1];
+    if(!sc||Math.hypot(a.x-b.x,a.y-b.y)<30){ $('mov-prompt').textContent='La referencia es demasiado pequeña o los dos puntos coinciden. Arrastra los puntos 1 y 2 a los extremos del objeto.'; return; }
+    CAM.stages[OV.stage]={ids:OV.seq.map(s=>s.id),pts:OV.pts.map(p=>({x:p.x,y:p.y})),scale:sc};
+    ovClose(); camStatus(); camCompute();
+  };
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&OV) ovClose(); });
+  new ResizeObserver(ovFit).observe($('mov-stage'));
+  document.querySelectorAll('[data-cam]').forEach(b=>b.addEventListener('click',()=>{
+    CAMSTAGE=b.dataset.cam; if(!(refCm()>0)){ $('c-out').innerHTML='<p>Indica el largo del objeto de referencia.</p>'; return; }
+    (b.dataset.src==='cam'?$('c-in-cam'):$('c-in-gal')).click();
+  }));
+  const onFile=async ev=>{
+    const f=ev.target.files&&ev.target.files[0]; ev.target.value=''; if(!f||!CAMSTAGE) return;
+    try{ const bg=await loadPhoto(f); ovOpen(CAMSTAGE,bg); }
+    catch(_){ $('c-out').innerHTML='<p>No se pudo abrir la foto. Prueba con otra.</p>'; }
+  };
+  $('c-in-cam').addEventListener('change',onFile); $('c-in-gal').addEventListener('change',onFile);
+  $('c-ref').addEventListener('change',()=>{ $('c-custom-wrap').hidden=$('c-ref').value!=='custom'; camRescale(); });
+  $('c-custom').addEventListener('input',camRescale);
+  $('c-use').onclick=camApply;
+}
+function camRescale(){ /* si cambia el objeto de referencia, se recalcula la escala de las fotos ya hechas */
+  const cm=refCm(); if(!(cm>0)) return;
+  ['side','front'].forEach(k=>{const st=CAM.stages[k]; if(st){ const a=st.pts[0],b=st.pts[1]; st.scale=Math.hypot(a.x-b.x,a.y-b.y)/cm; }});
+  camCompute();
+}
+
+/* ---------- selección de prenda y tela ---------- */
+function applyGarment(resetAll){
+  const g=$('garment').value, G=GARMENTS[g];
+  /* al cambiar de prenda se conservan las medidas que ya escribiste, midió la cámara o rellenó la guía */
+  Object.keys(G.def).forEach(k=>{if($(k)&&(resetAll||!$(k).dataset.touched)) $(k).value=G.def[k];});
+  document.querySelectorAll('.mf').forEach(el=>{el.hidden=!el.dataset.for.split(',').includes(g);});
+  updateHints();
+}
+function fillGarments(){
+  const para=$('para').value, sel=$('garment'), keys=Object.keys(GARMENTS).filter(k=>GARMENTS[k].para===para);
+  sel.innerHTML=keys.map(k=>'<option value="'+k+'">'+GARMENTS[k].label+'</option>').join('');
+  $('tiles').innerHTML=keys.map(k=>'<button type="button" class="tile" data-g="'+k+'" aria-pressed="false"><b>'+GARMENTS[k].label+'</b><span>'+GARMENTS[k].desc+'</span></button>').join('');
+  $('tiles').querySelectorAll('.tile').forEach(b=>b.addEventListener('click',()=>setGarment(b.dataset.g)));
+}
+function syncPressed(){
+  if(typeof syncGuide==='function') syncGuide();
+  document.querySelectorAll('[data-para]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.para===$('para').value)));
+  document.querySelectorAll('.tile').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.g===$('garment').value)));
+  document.querySelectorAll('[data-mat]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mat===$('mat').value)));
+}
+function setPara(v){$('para').value=v;document.querySelectorAll('input[data-touched]').forEach(e=>delete e.dataset.touched);fillGarments();applyGarment(true);syncPressed();render();}
+function setGarment(g){$('garment').value=g;applyGarment();syncPressed();render();}
+function setMat(v){
+  $('mat').value=v;
+  if(v==='rec'){$('price').value=3;$('defect').value=15;}else{$('price').value=9;$('defect').value=0;}
+  syncPressed();render();
+}
+document.querySelectorAll('input').forEach(el=>{if(!el.id.startsWith('g-')) el.addEventListener('input',()=>{el.dataset.touched='1';render();});});
+const touch=ids=>ids.forEach(i=>{if($(i)) $(i).dataset.touched='1';});
+document.querySelectorAll('[data-para]').forEach(b=>b.addEventListener('click',()=>setPara(b.dataset.para)));
+document.querySelectorAll('[data-mat]').forEach(b=>b.addEventListener('click',()=>setMat(b.dataset.mat)));
+fillGarments(); applyGarment(true); initGuide(); initV3UI(); ovBind(); syncPressed(); bindActions(); syncDL(); render();
+(async()=>{
+  try{
+    if(window.claude&&window.claude.use){DL=await window.claude.use('downloads');DLSTATE=DL?'ok':'none';}
+    else DLSTATE='none';
+  }catch(e){DL=null;DLSTATE='none';}
+  syncDL();
+})();
+</script>
+</body>
+</html>
