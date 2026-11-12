@@ -1304,9 +1304,20 @@ document.querySelectorAll('[data-mat]').forEach(b=>b.addEventListener('click',()
 fillGarments(); applyGarment(true); initGuide(); initV3UI(); ovBind(); syncPressed(); bindActions(); syncDL(); render();
 (async()=>{
   try{
-    if(window.claude&&window.claude.use){DL=await window.claude.use('downloads');DLSTATE=DL?'ok':'none';}
-    else DLSTATE='none';
-  }catch(e){DL=null;DLSTATE='none';}
+    if(window.claude&&window.claude.use){DL=await window.claude.use('downloads');}
+  }catch(e){DL=null;}
+  /* Fuera de Claude (por ejemplo, en Vercel) se baja con el navegador, con un enlace temporal. */
+  if(!DL){
+    DL={save:async o=>{
+      const blob=o.data instanceof Blob?o.data:new Blob([o.data],{type:/\.svg$/i.test(o.filename)?'image/svg+xml':'text/plain'});
+      const url=URL.createObjectURL(blob), a=document.createElement('a');
+      a.href=url; a.download=o.filename; a.style.display='none';
+      document.body.appendChild(a); a.click();
+      setTimeout(()=>{a.remove();URL.revokeObjectURL(url);},1500);
+      return {status:'saved'};
+    }};
+  }
+  DLSTATE='ok';
   syncDL();
 })();
 </script>
